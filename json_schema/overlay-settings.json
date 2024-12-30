@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "libraries": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9 ]+$": {
+          "type": "object",
+          "properties": {
+            "is_anime": { "type": "boolean" },
+            "use_watch_region": { "type": "boolean" }
+          },
+          "required": ["is_anime", "use_watch_region"]
+        }
+      },
+      "minProperties": 1
+    },
+      "overlay_settings": {
+        "type": "object",
+        "properties": {
+          "days_ahead": { "type": "integer", "minimum": 1, "maximum": 30 },
+          "overlay_save_folder": { "type": "string" },
+          "date_delimiter": { "type": "string", "enum": ["/", ".", "_", "-"]},
+          "remove_leading_zero": { "type": "boolean" },
+          "font": { "type": "string" },
+          "font_size": { "type": "integer" },
+          "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"},
+          "horizontal_align": { "type": "string", "enum": ["left","center","right"] },
+          "horizontal_offset": { "type": "integer", "minimum": 0 },
+          "vertical_align": { "type": "string", "enum": ["top","center","bottom"] },
+          "vertical_offset": { "type": "integer", "minimum": 0 },
+          "back_width": { "type": "integer", "exclusiveMinimum": 0 },
+          "back_height": { "type": "integer", "exclusiveMinimum": 0 },
+          "back_radius": { "type": "integer", "exclusiveMinimum": 0 },
+          "ignore_blank_results": { "type": "string" },
+          "with_status": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "watch_region": { "type": "string" },
+          "with_original_language": { "type": "string" },
+          "limit": { "type": "integer", "minimum": 0 },
+          "with_watch_monetization_types": { "type": "string", "pattern": "^(flatrate|free|ads|rent|buy)([|,](flatrate|free|ads|rent|buy))*$" }
+        },
+        "required": [
+          "days_ahead",
+          "overlay_save_folder",
+          "date_delimiter",
+          "remove_leading_zero",
+          "font",
+          "font_size",
+          "font_color",
+          "horizontal_align",
+          "vertical_align",
+          "horizontal_offset",
+          "vertical_offset",
+          "back_width",
+          "back_height",
+          "back_radius",
+          "ignore_blank_results",
+          "with_status",
+          "watch_region",
+          "with_original_language",
+          "limit",
+          "with_watch_monetization_types"
+        ]
+      },
+      "use_overlays": {
+        "type": "object",
+        "properties": {
+          "upcoming_series": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "new_series": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "new_airing_next": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "airing_series": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "airing_today": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "airing_next": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "ended_series": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "canceled_series": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "returning_series": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          },
+          "returns_next": {
+            "type": "object",
+            "properties": {
+              "use": { "type": "boolean" },
+              "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+              "text": { "type": "string" },
+              "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+            },
+            "required": ["use", "back_color", "text", "font_color"]
+          }
+        },
+        "required": [
+          "upcoming_series",
+          "new_series",
+          "new_airing_next",
+          "airing_series",
+          "airing_today",
+          "airing_next",
+          "ended_series",
+          "canceled_series",
+          "returning_series",
+          "returns_next"
+        ]
+      },
+      "returning_soon_collection": {
+        "type": "object",
+        "properties": {
+          "use": { "type": "boolean" },
+          "collection_save_folder": { "type": "string" },
+          "collection_days_ahead": {"type": "integer", "miniumum": 1 },
+          "days_last_aired": {"type": "integer", "miniumum": 1 },
+          "use_poster": {"type": "boolean" },
+          "poster_source": { "type": "string", "enum": ["url","file"] },
+          "poster_path": { "type": "string" },
+          "visible_home": { "type": "string" },
+          "visible_shared": { "type": "string" },
+          "summary": { "type": "string" },
+          "minimum_items": { "type": "integer", "minimum": 0 },
+          "delete_below_minimum": { "type": "string" },
+          "sort_title": { "type": "string" }
+        },
+        "required": [
+          "use",
+          "collection_save_folder",
+          "collection_days_ahead",
+          "days_last_aired",
+          "use_poster",
+          "poster_source",
+          "poster_path",
+          "visible_home",
+          "visible_shared",
+          "summary",
+          "minimum_items",
+          "delete_below_minimum",
+          "sort_title"
+        ]
+      },
+      "movie_new_release": {
+        "type": "object",
+        "properties": {
+          "use": { "type": "boolean" },
+          "new_movie_save_folder": { "type": "string" },
+          "days_to_consider_new": { "type": "integer", "minimum": 1, "maximum": 90 },
+          "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+          "text": { "type": "string" },
+          "font_color": { "type": "string", "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}(?:[0-9a-fA-F]{1,2})?$"}
+        },
+        "required": [
+          "use",
+          "new_movie_save_folder",
+          "days_to_consider_new",
+          "back_color",
+          "text",
+          "font_color"
+        ]
+      }
+    },
+    "required": ["libraries", "overlay_settings", "use_overlays", "returning_soon_collection", "movie_new_release"]
+  }
