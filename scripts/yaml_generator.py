@@ -93,6 +93,9 @@ def get_with_defaults(settings, primary_key, fallback_key=None, config_directory
     if primary_key == 'font_color' and not is_valid_color(value):
         value = DEFAULTS.get('font_color', '#FFFFFF')
 
+    if value in ["path/to/kometa-poster", "path/to/kometa-font"]:
+        value = DEFAULTS.get(primary_key)
+
     if isinstance(value, str) and "{config_directory}" in value:
         value = value.replace("{config_directory}", config_directory)
 
@@ -579,7 +582,7 @@ collections:
 """
                 if use_poster:
                     poster_source = get_with_defaults(collection_settings, 'poster_source', 'poster_source')
-                    poster_path = get_with_defaults(collection_settings, 'poster_path', 'poster_path')
+                    poster_path = get_with_defaults(collection_settings, 'poster_path', 'poster_path', config_directory)
                     template_string += f"{indent2}{poster_source}_poster: \"{poster_path}\"\n"
 
                 template_string += f"""{indent2}collection_order: custom

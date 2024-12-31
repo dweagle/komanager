@@ -74,7 +74,7 @@ def validate_overlay_settings(overlay_settings, config_directory):
     validate_path_setting(overlay_settings, 'overlay_save_folder', config_directory, True)
     validate_choice_setting(overlay_settings, 'date_delimiter', ['/', '.', '-', '_'], '/')
     validate_boolean_setting(overlay_settings, 'remove_leading_zero', False)
-    validate_string_setting(overlay_settings, 'font', f"{config_directory}/fonts/Inter-Medium.ttf", True)
+    validate_path_setting(overlay_settings, 'font', f"{config_directory}/fonts/Inter-Medium.ttf", True)
     validate_integer_setting(overlay_settings, 'font_size', 45, 1, None)
     validate_color_setting(overlay_settings, 'font_color', '#FFFFFF')
     validate_choice_setting(overlay_settings, 'horizontal_align', ['center', 'left', 'right'], 'center')
@@ -144,7 +144,7 @@ def validate_movie_new_release(movie_new_release_settings, config_directory):
 
 def validate_path_setting(settings, key, default, allow_blank=False):
     value = settings.get(key, default)
-    if value is None or (not allow_blank and value.strip() == "") or value == "path/to/folder" or value == "path/to/kometa-poster" or value == "path/to/kometa-font":
+    if (value is None or (not allow_blank and isinstance(value, str) and value.strip() == "") or value in ["path/to/folder", "path/to/kometa-poster", "path/to/kometa-font"]):
         logger.warning(f"{indentlog3}{key}: Missing '{key}' setting or path not set. Defaulting to '{default}'.")
     else:
         logger.info(f"{indentlog3}{key}: {value}")
