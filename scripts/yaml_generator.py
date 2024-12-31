@@ -63,7 +63,7 @@ DEFAULTS = {
     'collection_use': True,
     'collection_days_ahead': 30,
     'days_last_aired': 45,
-    'poster_source': 'url',
+    'poster_source': 'file',
     'poster_path':  "{config_directory}/posters/Kometa Returning Soon.jpg",
     'visible_home': True,
     'visible_shared': True,
@@ -150,7 +150,7 @@ def create_library_yaml(config_directory):
 
             template_string = f"""# {library_name} Template
 templates:
-  {library_name} Status:
+  {library_name} Status TMDB Discover:
     sync_mode: sync
     builder_level: show
     overlay:
@@ -175,7 +175,6 @@ templates:
       timezone: {timezone}
       with_status: <<status>>
 """
-        
             if use_watch_region:
                 logger.info(f"{indentlog2}'watch_region' set to 'true'")
                 logger.info(f"{indentlog3}Adding 'watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}'.")
@@ -198,7 +197,30 @@ templates:
                 logger.info(f"{indentlog3}Removing 'with_original_language'.")
 
             template_string += f"{indent3}limit: {get_with_defaults(overlay_settings, 'limit', 'limit')}\n"
-            
+
+            plex_all = f"""
+  {library_name} Status Plex All:
+    sync_mode: sync
+    builder_level: show
+    overlay:
+      group: status
+      weight: <<weight>>
+      name: text(<<text>>)
+      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
+      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
+      font_color: <<font_color>>
+      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
+      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'veritcal_align')}
+      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
+      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
+      back_color: <<back_color>>
+      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
+      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
+      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
+    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+"""
+            template_string += plex_all
+
             template_string += "\noverlays:"
 
             logger.info(f"{indentlog}Main template created")
@@ -210,30 +232,14 @@ templates:
 ##########################
 
             upcoming_series_settings = use_overlays.get("upcoming_series", {})
-            if get_with_defaults(upcoming_series_settings, "use", "use"):  # If "use" is True, include this section
+            if get_with_defaults(upcoming_series_settings, "use", "use"):
                 logger.info(f"{indentlog2}'Upcoming' set to true. Creating 'Upcoming' overlay.")
 
                 upcoming_section = f"""
 # UPCOMING SERIES OVERLAY
   {library_name} Upcoming Series:
-    sync_mode: sync
-    builder_level: show
-    overlay:
-      group: status
-      weight: 100
-      name: text({get_with_defaults(upcoming_series_settings, 'text', 'upcoming_text')})
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(upcoming_series_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(upcoming_series_settings, 'back_color', 'upcoming_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    variables: {{text: {get_with_defaults(upcoming_series_settings, 'text', 'upcoming_text')}, weight: 100, font_color: "{get_with_defaults(upcoming_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(upcoming_series_settings, 'back_color', 'upcoming_back_color')}"}}
+    template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
       tmdb_status:
@@ -242,7 +248,6 @@ templates:
         - production
       release.after: today
 """
-
                 template_string += upcoming_section
             else:
                 logger.info(f"{indentlog2}'Upcoming' set to false. 'Upcoming' overlay not created.")
@@ -252,30 +257,14 @@ templates:
 ##########################
 
             new_series_settings = use_overlays.get("new_series", {})
-            if get_with_defaults(new_series_settings, "use", "use"):  # If "use" is True, include this section
+            if get_with_defaults(new_series_settings, "use", "use"):
                 logger.info(f"{indentlog2}'New Series' set to true. Creating 'New Series' overlay.")
 
                 new_series_section = f"""
 # NEW SERIES BANNER/TEXT
   {library_name} New Series:
-    sync_mode: sync
-    builder_level: show
-    overlay:
-      group: status
-      weight: 76
-      name: text({get_with_defaults(new_series_settings, 'text', 'new_text')})
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(new_series_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_align')}
-      back_color: "{get_with_defaults(new_series_settings, 'back_color', 'new_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    variables: {{text: {get_with_defaults(new_series_settings, 'text', 'new_text')}, weight: 76, font_color: "{get_with_defaults(new_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(new_series_settings, 'back_color', 'new_back_color')}"}}
+    template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
       tmdb_status:
@@ -315,13 +304,11 @@ templates:
 # NEW AIRING NEXT BANNER/TEXT DAY {i}
   {library_name} New Airing Next {mmddyyyy_custom}: 
     variables: {{text: {get_with_defaults(new_airing_next_settings, 'text', 'new_airing_text')} {mmdd_custom}, weight: {weight}, font_color: "{get_with_defaults(new_airing_next_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(new_airing_next_settings, 'back_color', 'new_airing_back_color')}", date: {mmddyyyy}, status: 0}}
-    template: {{name: {library_name} Status}}
+    template: {{name: {library_name} Status TMDB Discover}}
     filters:
       first_episode_aired.after: {date_21_days_prior}
-    """
-
+"""
                     template_string += new_airing_next_section
-
             else:
                 logger.info(f"{indentlog2}'New Airing Next' set to false. 'New Airing Next' Overlay not created")
                 
@@ -336,24 +323,8 @@ templates:
                 airing_series_section = f"""
 # AIRING SERIES BANNER/TEXT
   {library_name} Airing Series:
-    sync_mode: sync
-    builder_level: show
-    overlay:
-      group: status
-      weight: 43
-      name: text({get_with_defaults(airing_series_settings, 'text', 'airing_text')})
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(airing_series_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(airing_series_settings, 'back_color', 'airing_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    variables: {{text: {get_with_defaults(airing_series_settings, 'text', 'airing_text')}, weight: 43, font_color: "{get_with_defaults(airing_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(airing_series_settings, 'back_color', 'airing_back_color')}"}}
+    template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
       tmdb_status:
@@ -379,7 +350,7 @@ templates:
 # AIRING TODAY BANNER/TEXT
   {library_name} Airing Today:
     variables: {{text: {get_with_defaults(airing_today_settings, 'text', 'today_text')}, weight: 75, font_color: "{get_with_defaults(airing_today_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(airing_today_settings, 'back_color', 'airing_back_color')}", date: {air_date_today}, status: 0}}
-    template: {{name: {library_name} Status}}
+    template: {{name: {library_name} Status TMDB Discover}}
 """
                 template_string += airing_today_section
 
@@ -411,12 +382,12 @@ templates:
 # AIRING NEXT BANNER/TEXT DAY {i}
   {library_name} Airing Next {mmddyyyy_custom}:
     variables: {{text: {get_with_defaults(airing_next_settings, 'text', 'next_text')} {mmdd_custom}, weight: {weight}, font_color: "{get_with_defaults(airing_next_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(airing_next_settings, 'back_color', 'airing_back_color')}", date: {mmddyyyy}, status: 0}}
-    template: {{name: {library_name} Status}}
+    template: {{name: {library_name} Status TMDB Discover}}
     filters:
       last_episode_aired.after: {date_15_days_prior}
-    """
-
+"""
                     template_string += airing_next_section
+
             else:
                 logger.info(f"{indentlog2}'Airing Next' set to false. 'Airing Next' overlay not created.")
 
@@ -432,24 +403,8 @@ templates:
                 ended_series_section = f"""
 # ENDED SERIES BANNER/TEXT
   {library_name} Ended Series:
-    sync_mode: sync
-    builder_level: show
-    overlay:
-      group: status
-      weight: 9
-      name: text({get_with_defaults(ended_series_settings, 'text', 'ended_text')}) 
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(ended_series_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(ended_series_settings, 'back_color', 'ended_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    variables: {{text: {get_with_defaults(ended_series_settings, 'text', 'ended_text')}, weight: 9, font_color: "{get_with_defaults(ended_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(ended_series_settings, 'back_color', 'ended_back_color')}"}}
+    template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
       tmdb_status:
@@ -471,24 +426,8 @@ templates:
                 canceled_series_section = f"""
 # CANCELED SERIES BANNER/TEXT
   {library_name} Canceled Series:
-    sync_mode: sync
-    builder_level: show
-    overlay:
-      group: status
-      weight: 10
-      name: text({get_with_defaults(canceled_series_settings, 'text', 'canceled_text')}) 
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(canceled_series_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_align')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(canceled_series_settings, 'back_color', 'canceled_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_width')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    variables: {{text: {get_with_defaults(canceled_series_settings, 'text', 'canceled_text')}, weight: 10, font_color: "{get_with_defaults(canceled_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(canceled_series_settings, 'back_color', 'canceled_back_color')}"}}
+    template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
       tmdb_status:
@@ -510,24 +449,8 @@ templates:
                 returning_series_section = f"""
 # RETURNING SERIES BANNER/TEXT
   {library_name} Returning Series:
-    sync_mode: sync
-    builder_level: show
-    overlay:
-      group: status
-      weight: 13
-      name: text({get_with_defaults(returning_series_settings, 'text', 'returning_text')}) 
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(returning_series_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_align')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(returning_series_settings, 'back_color', 'returning_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    variables: {{text: {get_with_defaults(returning_series_settings, 'text', 'returning_text')}, weight: 13, font_color: "{get_with_defaults(returning_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(returning_series_settings, 'back_color', 'returning_back_color')}"}}
+    template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
       tmdb_status:
@@ -564,13 +487,11 @@ templates:
 # RETURNS NEXT BANNER/TEXT DAY {i}
   {library_name} Returns Next {mmddyyyy_custom}:
     variables: {{text: {get_with_defaults(returns_next_settings, 'text', 'returns_text')} {mmdd_custom}, weight: {weight}, font_color: "{get_with_defaults(returns_next_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(returns_next_settings, 'back_color', 'returning_back_color')}", date: {mmddyyyy}, status: 0}}
-    template: {{name: {library_name} Status}}
+    template: {{name: {library_name} Status TMDB Discover}}
     filters:
       last_episode_aired.before: {date_14_days_prior}
-    """
-
+"""
                     template_string += returns_next_section
-
             else:
                 logger.info(f"{indentlog2}'Returns Next' set to false. 'Returns Next' overlay/s not created")
 
@@ -746,9 +667,9 @@ collections:
     except Exception as e:
         logger.error(f"An error occurred while generating collection files: {e}")
         
-##################################
+#############################
 # NEW MOVIE RELEASE OVERLAY #
-##################################
+#############################
 
 def create_new_movie_yaml(config_directory):
     try:
