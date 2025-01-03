@@ -462,7 +462,7 @@ templates:
                 returning_series_section = f"""
 # RETURNING SERIES BANNER/TEXT
   {library_name} Returning Series:
-    variables: {{text: {get_with_defaults(returning_series_settings, 'text', 'returning_text')}, weight: 13, font_color: "{get_with_defaults(returning_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(returning_series_settings, 'back_color', 'returning_back_color')}"}}
+    variables: {{text: {get_with_defaults(returning_series_settings, 'text', 'returning_text')}, weight: 12, font_color: "{get_with_defaults(returning_series_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(returning_series_settings, 'back_color', 'returning_back_color')}"}}
     template: {{name: {library_name} Status Plex All}}
     plex_all: true
     filters:
@@ -494,7 +494,7 @@ templates:
                     mmdd_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}')
                     mmddyyyy_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}{date_delimiter}%Y')
 
-                    weight = 43 - i + 1
+                    weight = 42 - i + 1
                     
                     returns_next_section = f"""
 # RETURNS NEXT BANNER/TEXT DAY {i}
