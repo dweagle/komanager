@@ -9,7 +9,7 @@ from scripts.logger import log_setup
 from scripts.scheduler import schedule_main, scheduler
 from scripts.settings import create_settings_file, update_settings_file
 from scripts.validate_settings import validate_settings
-from scripts.yaml_generator import create_library_yaml, create_collection_yaml, create_new_movie_yaml
+from scripts.yaml_generator import create_library_yaml, create_collection_yaml, create_new_movie_yaml, create_in_history_yaml
 
 logger = logging.getLogger(__name__)
 schedule_logger = logging.getLogger('schedule')
@@ -93,6 +93,7 @@ def main_logic():
             logger.error("Validation failed. Please fix the issues in the settings file and rerun the script.")
             return
         
+        logger.info("")
         logger.info("Validation successful!")
         logger.info("")
         logger.info("Generating overlay files for Kometa.")
@@ -100,6 +101,7 @@ def main_logic():
 
         create_library_yaml(config_directory)
         create_collection_yaml(config_directory)
+        create_in_history_yaml(config_directory)
         create_new_movie_yaml(config_directory)
 
         logger.info("All library overlay and collection files created.")

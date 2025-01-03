@@ -30,7 +30,7 @@ def validate_settings(config_directory):
             logger.error(f"{indentlog}Settings file format is invalid. Expected a dictionary.")
             return False
 
-        required_sections = ['libraries', 'overlay_settings', 'use_overlays', 'returning_soon_collection', 'movie_new_release']
+        required_sections = ['libraries', 'overlay_settings', 'use_overlays', 'returning_soon_collection', 'movie_new_release', 'in_history_collection']
         for section in required_sections:
             if section not in settings or not isinstance(settings[section], dict) or not settings[section]:
                 logger.error(f"{indentlog}The settings file does not contain a valid '{section}' section or it is empty.")
@@ -44,9 +44,11 @@ def validate_settings(config_directory):
             return False
         if not validate_returning_soon_collection(settings['returning_soon_collection'], config_directory):
             return False
+        if not validate_in_history_collection(settings['in_history_collection'], config_directory):
+            return False
         if not validate_movie_new_release(settings['movie_new_release'], config_directory):
             return False
-        
+
         return True
 
     except Exception as e:
@@ -120,11 +122,33 @@ def validate_returning_soon_collection(collection_settings, config_directory):
     validate_choice_setting(collection_settings, 'poster_source', ['url', 'file'], 'url')
     validate_path_setting(collection_settings, 'poster_path', f"{config_directory}/posters/Kometa Returning Soon.jpg", True)
     validate_choice_setting(collection_settings, 'visible_home', ['true', 'false', True, False], 'true')
+    validate_choice_setting(collection_settings, 'visible_library', ['true', 'false', True, False], 'true')
     validate_choice_setting(collection_settings, 'visible_shared', ['true', 'false', True, False], 'true')
     validate_string_setting(collection_settings, 'summary', 'Shows returning soon!', True)
     validate_integer_setting(collection_settings, 'minimum_items', 1, 1, None)
     validate_choice_setting(collection_settings, 'delete_below_minimum', ['true', 'false', True, False], 'true')
     validate_string_setting(collection_settings, 'sort_title', '!010_Returning', True)
+
+    return True
+
+def validate_in_history_collection(in_history_settings, config_directory):
+    logger.info("")
+    logger.info(f"{indentlog}in_history_collection:")
+
+    validate_boolean_setting(in_history_settings, 'use', True)
+    validate_path_setting(in_history_settings, 'in_history_save_folder', config_directory, True)
+    validate_choice_setting(in_history_settings, 'in_history_range', ['days', 'weeks', 'months'], 'weeks')
+    validate_integer_setting(in_history_settings, 'starting_year', 1980, 1000, None)
+    validate_integer_setting(in_history_settings, 'ending_year', 2024, 1000, None)
+    validate_boolean_setting(in_history_settings, 'use_poster', False)
+    validate_choice_setting(in_history_settings, 'poster_source', ['url', 'file'], 'url')
+    validate_path_setting(in_history_settings, 'poster_path', f"{config_directory}/posters/in-history.jpg", True)
+    validate_choice_setting(in_history_settings, 'visible_home', ['true', 'false', True, False], 'false')
+    validate_choice_setting(in_history_settings, 'visible_library', ['true', 'false', True, False], 'true')
+    validate_choice_setting(in_history_settings, 'visible_shared', ['true', 'false', True, False], 'false')
+    validate_integer_setting(in_history_settings, 'minimum_items', 1, 1, None)
+    validate_choice_setting(in_history_settings, 'delete_below_minimum', ['true', 'false', True, False], 'true')
+    validate_string_setting(in_history_settings, 'sort_title', '!012_In_History', True)
 
     return True
 
@@ -138,7 +162,6 @@ def validate_movie_new_release(movie_new_release_settings, config_directory):
     validate_color_setting(movie_new_release_settings, 'back_color', '#008001')
     validate_string_setting(movie_new_release_settings, 'text', 'default_text')
     validate_color_setting(movie_new_release_settings, 'font_color', '#FFFFFF')
-    logger.info("")
 
     return True
 

@@ -68,14 +68,24 @@ DEFAULTS = {
     'visible_home': True,
     'visible_shared': True,
     "summary": 'Shows returning soon!',
-    "minimum_items": '1',
+    "minimum_items": 1,
     "delete_below_minimum": 'true',
     "sort_title": '!010_Returning',
+
+    "in_history_use": True,
+    "range": "weeks",
+    "start_year": 1980,
+    "IH_poster_soruce": 'file',
+    "IH_poster_path": "{config_directory}/posters/in-history.jpg",
+    "IH_visible_home": False,
+    "IH_visible_shared": False,
+    "IH_visible_library": True,
+    "IH_sort_title": '!012_In_History',
 
     'new_movie_use': True,
     'days_new': 90,
     'new_movie_back_color': '#103197',
-    'new_movie_text': 'N E W '
+    'new_movie_text': 'N E W  R E L E A S E'
 }
 
 timezone = os.getenv('TZ', DEFAULTS['timezone'])
@@ -110,6 +120,7 @@ indentlog3 = "         " # indent for 9 spaces in log
 indentlog4 = "            " # indent for 12 spacees in log
 indent2 = "    "  # indent 2 tabs (4 spaces) for kometa yaml spacing
 indent3 = "      " # indent 3 tabs (6 spaces) for kometa yaml spacing
+indent4 = "        " # indent 4 tabs (8 spaces) for kometa yaml spacing
 
 def create_library_yaml(config_directory):
     try:
@@ -227,7 +238,6 @@ templates:
             template_string += "\noverlays:"
 
             logger.info(f"{indentlog}Main template created")
-            logger.info("")
             logger.info(f"{indentlog}Creating optional overlays")
 
 ##########################
@@ -588,6 +598,7 @@ collections:
                 template_string += f"""{indent2}collection_order: custom
     visible_home: {get_with_defaults(collection_settings, 'visible_home', 'visible_home').lower()}
     visible_shared: {get_with_defaults(collection_settings, 'visible_shared', 'visible_shared').lower()}
+    visible_library: {get_with_defaults(collection_settings, 'visible_library', 'visible_library').lower()}
     sync_mode: sync
     summary: "{get_with_defaults(collection_settings, 'summary', 'summary')}"
     minimum_items: {get_with_defaults(collection_settings, 'minimum_items', 'minimum_items')}
@@ -669,7 +680,143 @@ collections:
 
     except Exception as e:
         logger.error(f"An error occurred while generating collection files: {e}")
+
+#########################
+# IN HISTORY COLLECTION #
+#########################
+
+def create_in_history_yaml(config_directory):
+    try:
+        settings = load_settings(config_directory, log_message=False)
         
+        in_history_settings = settings.get('in_history_collection', {})
+        starting_year = get_with_defaults(in_history_settings, 'starting_year', 'start_year' )
+        ending_year = in_history_settings.get('ending_year', datetime.now().year)
+        in_history_range = get_with_defaults(in_history_settings, 'in_history_range', 'range')
+
+        current_date = datetime.now()
+        current_month = current_date.month
+        current_day = current_date.day
+
+        def generate_date_ranges(range_type):
+            date_ranges = []
+            for year in range(starting_year, ending_year + 1):
+                if range_type == 'days':
+                    date_before = (datetime(year, current_month, current_day) - timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_after = (datetime(year, current_month, current_day) + timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_ranges.append({
+                        'release.after': date_before,
+                        'release.before': date_after
+                    })
+                elif range_type == 'months':
+                    days_in_month = (datetime(year, current_month % 12 + 1, 1) - timedelta(days=1)).day
+                    date_before = (datetime(year, current_month, 1) - timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_after = (datetime(year, current_month, days_in_month) + timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_ranges.append({
+                        'release.after': date_before,
+                        'release.before': date_after
+                    })
+                elif range_type == 'weeks':
+                    # Calculate the start and end of the current week for each year
+                    start_of_week = datetime(year, current_month, current_day) - timedelta(days=datetime(year, current_month, current_day).weekday())  # Monday
+                    end_of_week = start_of_week + timedelta(days=6)  # Sunday
+                    date_before = (start_of_week - timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_after = (end_of_week + timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_ranges.append({
+                        'release.after': date_before,
+                        'release.before': date_after
+                    })
+            return date_ranges
+
+        date_ranges = generate_date_ranges(in_history_range)
+
+        if get_with_defaults(in_history_settings, "use", "in_history_use"):
+            logger.info(f"{indentlog}'in_history' 'use:' set to true. Creating 'in_history' collection.")
+
+            use_poster = get_with_defaults(in_history_settings, 'use_poster', 'IH_use_poster')
+        
+            if not use_poster:
+                logger.info(f"{indentlog2}'use_poster' set to {use_poster}. Excluding poster setting from collection YAML")
+
+            if in_history_range == 'days':
+                summary_range = 'day'
+                title_range = 'Day'
+            elif in_history_range == 'months':
+                summary_range = 'month'
+                title_range = 'Month'
+            elif in_history_range == 'weeks':
+                summary_range = 'week'
+                title_range = 'Week'
+
+            in_history_string = f"""# This {title_range} in History
+collections:
+  This {title_range} in History:
+"""
+            if use_poster:
+                poster_source = get_with_defaults(in_history_settings, 'poster_source', 'IH_poster_source')
+                poster_path = get_with_defaults(in_history_settings, 'poster_path', 'IH_poster_path', config_directory)
+                in_history_string += f"{indent2}{poster_source}_poster: \"{poster_path}\"\n"
+
+            in_history_string += f"""{indent2}collection_order: release
+    visible_home: {get_with_defaults(in_history_settings, 'visible_home', 'IH_visible_home').lower()}
+    visible_shared: {get_with_defaults(in_history_settings, 'visible_shared', 'IH_visible_shared').lower()}
+    visible_library: {get_with_defaults(in_history_settings, 'visible_library', 'IH_visible_library').lower()}
+    sync_mode: sync
+"""
+            in_history_string += f"""{indent2}summary: "Released this {summary_range} in history."
+"""
+            in_history_string += f"""{indent2}minimum_items: {get_with_defaults(in_history_settings, 'minimum_items', 'IH_minimum_items')}
+    delete_below_minimum: {get_with_defaults(in_history_settings, 'delete_below_minimum', 'IH_delete_below_minimum').lower()}
+    sort_title: "{get_with_defaults(in_history_settings, 'sort_title', 'IH_sort_title')}"
+    plex_search:
+      any:
+        all:
+"""
+            for date_range in date_ranges:
+                in_history_string += f"{indent4}  - release.after: {date_range['release.after']}\n"
+                in_history_string += f"{indent4}    release.before: {date_range['release.before']}\n"
+
+###############################
+# WRITE IN HISTORY COLLECTION #
+###############################
+
+            in_history_save_folder = in_history_settings.get('in_history_save_folder')
+
+            if in_history_save_folder and isinstance(in_history_save_folder, str):
+                in_history_save_folder = in_history_save_folder.strip()
+                if in_history_save_folder == "path/to/folder":
+                    in_history_save_folder = ''
+            else:
+                in_history_save_folder = ''
+
+            if in_history_save_folder:
+                logger.info(f"{indentlog2}Using 'in_history' save folder: {in_history_save_folder}")
+            else:
+                logger.debug(f"{indentlog2}No 'in_history' save folder provided.  Using '{config_directory}' folder.")
+                in_history_save_folder = config_directory
+
+            if not os.path.exists(in_history_save_folder):
+                logger.error(f"{indentlog}'in_history' save folder doesn't exist or permissions not set.  Exiting main script")
+                logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
+                return
+
+            output_file_path = os.path.join(in_history_save_folder, f"collection-in-history.yml")
+            
+            try:
+                with open(output_file_path, 'w') as file:
+                    file.write(in_history_string)
+                logger.info(f"{indentlog}Generated 'in-history' collection at '{output_file_path}'")
+                logger.info("")
+            except Exception as e:
+                logger.error(f"{indentlog}Error generating 'in-history' collection: {e}")
+                logger.info("")
+        else:
+            logger.info(f"{indentlog2}'in-history' set to false. 'new_movie_relase_date' overlay not created")
+            logger.info("")
+            
+    except Exception as e:
+        logger.error(f"An error occurred while 'movie_new_release' overlay file: {e}")
+
 #############################
 # NEW MOVIE RELEASE OVERLAY #
 #############################
@@ -733,7 +880,7 @@ overlays:
                 logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
                 return
 
-            output_file_path = os.path.join(new_movie_save_folder, f"overlay-movie-new-release.yml")
+            output_file_path = os.path.join(new_movie_save_folder, "overlay-movie-new-release.yml")
             
             try:
                 with open(output_file_path, 'w') as file:

@@ -140,10 +140,28 @@ settings = OrderedDict({
         "poster_path": "path/to/kometa-poster",
         "visible_home": "true",
         "visible_shared": "true",
+        "visible_library": "false",
         "summary": DoubleQuotedScalarString("Shows returning soon!"),
         "minimum_items": 1,
         "delete_below_minimum": "true",
         "sort_title": DoubleQuotedScalarString("!010_Returning")
+    }),
+
+    "in_history_collection": OrderedDict({
+        "use": True,
+        "in_history_save_folder": "path/to/folder",
+        "in_history_range": "weeks",
+        "starting_year": 1980,
+        "ending_year": 2024,
+        "use_poster": False,
+        "poster_source": "file",
+        "poster_path": "path/to/kometa-poster",
+        "visible_home": "false",
+        "visible_shared": "false",
+        "visible_library": "true",
+        "minimum_items": 1,
+        "delete_below_minimum": "true",
+        "sort_title": DoubleQuotedScalarString("!012_In_History")
     }),
 
     "movie_new_release": OrderedDict({
