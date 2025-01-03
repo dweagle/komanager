@@ -161,10 +161,27 @@ returning_soon_collection:
   poster_path: /path/to/kometa-poster     # Path placed in final YAML for Kometa to use. Kometa must have permissions for this folder. Can be a URL link or file path. Defaults to url Kometa poster included in config.
   visible_home: "true"          # Collection visible on home page. "true" or "false".
   visible_shared: "true"        # Collection visible on friends/users home page. "true" or "false".
+  visible_library: 'true'       # Collection visible on library recommendations page. "true" or "false"
   summary: "Shows returning soon!" # Collection summary displayed on Plex collection page.
   minimum_items: 1              # Minimum items in collection before being considered for deletion.
   delete_below_minimum: 'true'  # Will delete collection in Plex if it goes below minimum items.
   sort_title: "!010_Returning"  # Sort order title of collection in Plex.
+
+in_history_collection:
+  use: true                     # True to create collection YAML. False to not create.
+  in_history_save_folder: path/to/folder      # Path to collection YAML folder (leave blank for /config folder). Kometa must have permissions to this folder.
+  in_history_range: weeks      # days, weeks, or months - Default is weeks.  Creates a collection of library items that released on this day, week, or month in history.
+  starting_year: 1980          # Release year to start collection
+  ending_year: 2024            # Release year to end collection
+  use_poster: false             # False removes the poster source/path from the collection YAML.  Set to true if you want to use a specific poster.  Set to false if Kometa uses assets folder for posters.
+  poster_source: url            # url or file. url for outside source, file for local poster. Defaults to url and Kometa GitHub poster.  
+  poster_path: /path/to/kometa-poster     # Path placed in final YAML for Kometa to use. Kometa must have permissions for this folder. Can be a URL link or file path. Defaults to url Kometa poster included in config.
+  visible_home: "false"          # Collection visible on home page. "true" or "false".
+  visible_shared: "false"        # Collection visible on friends/users home page. "true" or "false".
+  visible_library: 'true'       # Collection visible on library recommendations page. "true" or "false"
+  minimum_items: 1              # Minimum items in collection before being considered for deletion.
+  delete_below_minimum: 'true'  # Will delete collection in Plex if it goes below minimum items.
+  sort_title: "!012_In_History"  # Sort order title of collection in Plex.
 
 # Creates an overlay YAML that will add a "N E W  R E L E A S E" status overlay on movies considered to be new release.
 movie_new_release:
