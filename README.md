@@ -200,7 +200,7 @@ movie_new_release:
 Eample Docker Compose:
 ```YAML
 services:
-  status-overlay:
+  komanager:
     image: dweagle/komanager:latest
     container_name: komanager
     user: 1000:1002
@@ -263,7 +263,7 @@ source komanager-venv/bin/activate
 ```YAML
 python3 -m pip install -r requirements.txt
 ```
-5. Run status-overlay. This will create a settings file that you can edit your overlay and collection preferences. This runs the script one time and exits.
+5. Run komanager. This will create a settings file that you can edit your overlay and collection preferences. This runs the script one time and exits.
 ```YAML
 python3 komanager.py -r
 ```
