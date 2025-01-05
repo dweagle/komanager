@@ -205,7 +205,7 @@ docker run -d \
   -e TZ=America/New_York \
   -e SCHEDULE=06:00 \
   -e RUN_NOW=false \
-  -v /path/to/status-overlay/config:/config:rw \
+  -v /path/to/komanager/config:/config:rw \
   -v /path/to/kometa/overlays:/path/to/kometa/overlays:rw \
   --restart unless-stopped \
   dweagle/komanager:latest
