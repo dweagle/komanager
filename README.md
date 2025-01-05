@@ -1,7 +1,7 @@
-<div align="center"><img src="readme_docs/komanager.png" alt="Example Posters" width="100" height="100"><h1>KoManager</h1></div>
+<div align="center"><img src="readme_docs/KoManager.png" alt="Example Posters" width="100" height="100"><h1>KoManager</h1></div>
 <div align="center">Creates customized YAML files that can be used in <a href="https://github.com/Kometa-Team/Kometa">Kometa</a>.</div><br>
 <div align="center">- Show Status Overlays - (Upcoming, Returning, Ended, Canceled, New Series,</div>
-<div align="center">New - Airs MM/DD, Airing, Airs Next MM/DD, and Returns MM/DD)</div><br>
+<div align="center">New - Airs MM/DD, Airing, Airs Next MM/DD, and Returns MM/DD)</div>
 <div align="center">KoManager will update dates daily to keep overlays fresh.</div><br>
 <div align="center">- 'Returning Soon' collection to display shows that will return to airing.</div><br>
 <div align="center">- 'In History' collection to display items released in your library from this day/week/month in history.</div><br>
