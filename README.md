@@ -197,7 +197,6 @@ movie_new_release:
 
 # Docker Setup
 ### Image available on [dockerhub](https://hub.docker.com/r/dweagle/komanager)
-```
 Eample Docker Compose:
 ```YAML
 services:
@@ -231,6 +230,7 @@ docker run -d \
   -v /path/to/kometa/overlays:/path/to/kometa/overlays:rw \
   --restart unless-stopped \
   dweagle/komanager:latest
+```
 
 ### Manual Run
 If you are doing testing on your overlay/collection settings and don't want to restart the container multiple times or set the env RUN_NOW variable to true, you can connect to the running container and run the following command.  It will run the main.py script and do a complete run.
