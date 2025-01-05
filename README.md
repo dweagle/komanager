@@ -1,4 +1,4 @@
-<div align="center"><img src="readme_docs/KoManager.png" alt="Example Posters" width="100" height="100"><h1>KoManager</h1></div>
+<div align="center"><img src="readme_docs/KoManager.png" alt="Example Posters" width="150" height="150"><h1>KoManager</h1></div>
 <div align="center">Creates customized YAML files that can be used in <a href="https://github.com/Kometa-Team/Kometa">Kometa</a>.</div><br>
 <div align="center">- Show Status Overlays - (Upcoming, Returning, Ended, Canceled, New Series,</div>
 <div align="center">New - Airs MM/DD, Airing, Airs Next MM/DD, and Returns MM/DD)</div>
