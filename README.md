@@ -1,11 +1,11 @@
-<div align="center"><img src="readme_docs/status-overlay.png" alt="Example Posters" width="100" height="100"><h1>STATUS-OVERLAY</h1></div>
-
-<div align="center">Creates customized YAML files that can be used in <a href="https://github.com/Kometa-Team/Kometa">Kometa</a> overlays showing airing status on posters.</div><br>
-<div align="center">(Upcoming, Returning, Ended, Canceled, New Series,</div>
+<div align="center"><img src="readme_docs/komanager.png" alt="Example Posters" width="100" height="100"><h1>KoManager</h1></div>
+<div align="center">Creates customized YAML files that can be used in <a href="https://github.com/Kometa-Team/Kometa">Kometa</a>.</div><br>
+<div align="center">- Show Status Overlays - (Upcoming, Returning, Ended, Canceled, New Series,</div>
 <div align="center">New - Airs MM/DD, Airing, Airs Next MM/DD, and Returns MM/DD)</div><br>
-<div align="center">It can also create a 'Returning Soon' collection to display shows that will return to airing.</div><br>
-<div align="center">Can create an 'In History' collection to display items released in your library from this day/week/month in history.</div><br>
-<div align="center">An option to create a 'NEW RELEASE' status overlay for movie posters is also available.</div><br>
+<div align="center">KoManager will update dates daily to keep overlays fresh.</div><br>
+<div align="center">- 'Returning Soon' collection to display shows that will return to airing.</div><br>
+<div align="center">- 'In History' collection to display items released in your library from this day/week/month in history.</div><br>
+<div align="center">- 'NEW RELEASE' status overlay for movie posters .</div><br>
 <br>
 <div align="center">Inspired by <a href="https://github.com/InsertDisc/pattrmm">pattrmm</a> by InsertDisc</div>
 <br>
@@ -19,19 +19,20 @@
 <div align="center"><img src="readme_docs/example7.png" alt="Example Posters" width="600"></div>
 
 ## What does this script do?
-If you are using [Kometa](https://github.com/Kometa-Team/Kometa) to manage your Plex Media Server, `status-overlay` can create YAML files used by Kometa to add a status overlay to your posters. This overlay will show users the airing status of TV show media in your library. The default status overlay in Kometa displays the status of shows as returning, ended, or canceled. YAML files created by `status-overlay` can instruct Kometa to include airing and returning dates, which are updated daily, to provide users with more information. (My significant other loves being able to quickly see when her shows are on and returning!)
+If you are using [Kometa](https://github.com/Kometa-Team/Kometa) to manage your Plex Media Server, `KoManager` can create YAML files used by Kometa to add a status overlay to your posters. This overlay will show users the airing status of TV show media in your library. The default status overlay in Kometa displays the status of shows as returning, ended, or canceled. YAML files created by `KoManager` can instruct Kometa to include airing and returning dates, which are updated daily, to provide users with more information. (My significant other loves being able to quickly see when her shows are on and returning!)
 
-`status-overlay` can also create a 'Returning Soon' collection YAML that will display on Plex's home and library recommendation pages.
+A 'New Release' overlay similar to the status overlay can also be created.
+`KoManager` can also create a 'Returning Soon' and 'In Hisotry' collection YAMLs that will display on Plex's home and library recommendation pages if desired.
 
 ## How does this script work?
-Once set up, the script will create a default settings file in the main config folder (see below), allowing you to customize the look of your overlays. You can adjust the size, color, font, location, etc., of your overlay to your liking. You must have knowledge of how Kometa uses these settings or use the default status settings to create overlays just like in the pictures above.
+Once set up, the script will create a default settings file in the main config folder (see below), allowing you to customize the look of your overlays, collections, etc. You can adjust the size, color, font, location, etc., of your overlay to your liking. Collection modification is also possible. You must have knowledge of how Kometa uses these settings or use the default status settings to create overlays just like in the pictures above.
 
-After adjusting your settings file, you will run the script again. It will then create a YAML for each library designated in the settings file. These YAML files can be created in your config folder, directly where you keep your Kometa overlay YAMLs, or other locations you choose. The script will run on a schedule and adjust the dates in the YAML daily to update the overlay dates.
+After adjusting your settings file, you will run the script again. It will then create a YAML for each section designated in the settings file. One can pick and choose which options to use. These YAML files can be created in your config folder, directly where you keep your Kometa overlay YAMLs, or other locations you choose. The script will run on a schedule and adjust the dates in the YAML daily to update the overlay dates or collection dates.
 
 ## Getting Started
-See the status-overlay [Wiki](https://github.com/dweagle/status-overlay/wiki) for more help.
+See the `KoManager` [Wiki](https://github.com/dweagle/KoManager/wiki) for more help.
 
-1. Install `status-overlay` locally or use the Docker image to create a Docker container (see below).
+1. Install `KoManager` locally or use the Docker image to create a Docker container (see below).
 
 2. Start the script/container to have it create your settings file. Adjust settings to your liking.
 
@@ -42,7 +43,7 @@ See the status-overlay [Wiki](https://github.com/dweagle/status-overlay/wiki) fo
 5. Set your daily schedule for your script/container and enjoy! Container runtime can be set with an environment variable. Local runs can be set with a cron/task scheduler job.
 
 # Default Settings File
-This default setting file will be created on the first run for you. It will create YAML files that produce overlays like the ones in the images at the top of the README. Settings that Kometa uses to apply overlays/collections can be modified in this settings file.
+This default setting file will be created on the first run for you. It will create YAML files that produce overlays or collections like the ones in the images at the top of the README. Settings that Kometa uses to apply overlays/collections can be modified in this settings file.
 ```yaml
 # Settings for overlay configurations
 Kometa can use the TMDB Discover API to grab series info to find air dates, etc. Using the default settings
@@ -195,11 +196,11 @@ movie_new_release:
 ```
 
 # Docker Setup
-### Image available on [dockerhub](https://hub.docker.com/r/dweagle/status-overlay)
+### Image available on [dockerhub](https://hub.docker.com/r/dweagle/komanager)
 Example Docker CLI:
 ```
 docker run -d \
-  --name status-overlay \
+  --name komanager \
   --user 1000:1002 \
   -e TZ=America/New_York \
   -e SCHEDULE=06:00 \
@@ -207,14 +208,14 @@ docker run -d \
   -v /path/to/status-overlay/config:/config:rw \
   -v /path/to/kometa/overlays:/path/to/kometa/overlays:rw \
   --restart unless-stopped \
-  dweagle/status-overlay:latest
+  dweagle/komanager:latest
 ```
 Eample Docker Compose:
 ```YAML
 services:
   status-overlay:
-    image: dweagle/status-overlay:latest
-    container_name: status-overlay
+    image: dweagle/komanager:latest
+    container_name: komanager
     user: 1000:1002
     environment:
       - TZ=America/New_York  # System time and called for some overlays
@@ -222,52 +223,52 @@ services:
       - RUN_NOW:false        # true will bypass the schedule once on container startup
     volumes:
       # Mount your local directory to the containers internal config folder.
-      # By default, the logs, settings, and overlays will be created here.
-      - /path/to/status-overlay/config:/config:rw 
-      # If you want overlay files to go to a seperate folder, ex. inside kometa, do
-      # another mount to the save folder you entered in the settings (overlay_save_folder:)
+      # By default, the logs, settings, and overlays/collections will be created here.
+      - /path/to/komanager/config:/config:rw 
+      # If you want overlay/collection files to go to a seperate folder, ex. inside kometa, do
+      # another mount to the save folder you entered in the settings (overlay_save_folder:, etc.)
       # Make sure the path matches the settings file path.
       - /path/to/kometa/overlays:/path/to/kometa/overlays:rw
     restart: unless-stopped  
 ```
 ### Manual Run
-If you are doing testing on your overlay settings and don't want to restart the container multiple times or set the env RUN_NOW variable to true, you can connect to the running container and run the following command.  It will run the main.py script and do a complete run.
+If you are doing testing on your overlay/collection settings and don't want to restart the container multiple times or set the env RUN_NOW variable to true, you can connect to the running container and run the following command.  It will run the main.py script and do a complete run.
 ```ruby
-python3 status_overlay.py -r
+python3 komanager.py -r
 ```
 or
 ```ruby
-python3 status_overlay.py --run-now
+python3 komanager.py --run-now
 ```
 # Local Setup (Linux)
 Local setup requires a recent version of Python to be installed.
 
 1. Clone the repository to your home directory and then enter that directory.
 ```YAML
-git clone https://github.com/dweagle/status-overlay
+git clone https://github.com/dweagle/komanager
 ```
 ```YAML
-cd status-overlay
+cd komanager
 ```
 2. Inside that directory create a virtual environment.
 ```YAML
-python3 -m venv status-overlay-venv
+python3 -m venv komanager-venv
 ```
 3. Activate the virtual environment.
 ```YAML
-source status-overlay-venv/bin/activate
+source komanager-venv/bin/activate
 ```
 4. Install any python requirements.
 ```YAML
 python3 -m pip install -r requirements.txt
 ```
-5. Run status-overlay. This will create a settings file that you can edit your overlay and the Returning Soon Collection preferences. This runs the script one time and exits.
+5. Run status-overlay. This will create a settings file that you can edit your overlay and collection preferences. This runs the script one time and exits.
 ```YAML
-python3 status_overlay.py -r
+python3 komanager.py -r
 ```
 6. After adjusting your settings, run the script again to create your Kometa YAMLs.
 ```YAML
-python3 status_overlay.py -r
+python3 komanager.py -r
 ```
 7. Deactivate your virtual environment.
 ```YAML
@@ -275,5 +276,5 @@ deactivate
 ```
 8. You can return to this virtual environment daily and run the script manually using the commands from above. Or, set up a cron job for automated daily scheduling using the command below along with your cron job settings. A runtime set anytime before your Kometa run would be ideal.  This will ensure Kometa has updated dates in the YAML files.
 ```YAML
-cd /path/to/status-overlay && status-overlay-venv/bin/python3 status_overlay.py -r 
+cd /path/to/komanager && komanager-venv/bin/python3 komanager.py -r 
 ```

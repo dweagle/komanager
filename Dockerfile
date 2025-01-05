@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 COPY ./fonts /fonts
 COPY ./posters /posters
 COPY ./scripts /app/scripts
-COPY status_overlay.py .
+COPY komanager.py .
 
 # Stage 2: Runtime stage
 FROM python:3.10-slim AS runtime
@@ -48,9 +48,9 @@ COPY --from=builder /install /usr/local
 COPY ./posters /posters
 COPY ./fonts /fonts
 COPY ./scripts /app/scripts
-COPY status_overlay.py .
+COPY komanager.py .
 
 ENV PYTHONPYCACHEPREFIX=/app/scripts/__pycache__
 
 # Default entrypoint
-ENTRYPOINT ["python3", "status_overlay.py"]
+ENTRYPOINT ["python3", "komanager.py"]

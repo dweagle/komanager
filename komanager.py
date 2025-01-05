@@ -45,11 +45,25 @@ def graceful_shutdown(signal_num, _):
     schedule_logger.info("Shutting down script...")
     sys.exit(0)
 
+def copy_new_or_changed_files(src, dest):
+    if not os.path.exists(dest):
+        os.makedirs(dest, exist_ok=True)
+    
+    for root, _, files in os.walk(src):
+        relative_path = os.path.relpath(root, src)
+        dest_dir = os.path.join(dest, relative_path)
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir, exist_ok=True)
+        
+        for file in files:
+            src_file = os.path.join(root, file)
+            dest_file = os.path.join(dest_dir, file)
+            if not os.path.exists(dest_file) or os.path.getmtime(src_file) > os.path.getmtime(dest_file):
+                shutil.copy2(src_file, dest_file)
+
 if in_docker:
-    if not os.path.exists(font_dest):
-        shutil.copytree(font_src, font_dest)
-    if not os.path.exists(poster_dest):
-        shutil.copytree(poster_src, poster_dest)
+    copy_new_or_changed_files(font_src, font_dest)
+    copy_new_or_changed_files(poster_src, poster_dest)
 
 def main():
     log_setup(config_directory)

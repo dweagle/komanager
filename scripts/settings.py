@@ -17,7 +17,7 @@ yaml.Representer.add_representer(OrderedDict, RoundTripRepresenter.represent_dic
 logger = logging.getLogger(__name__)
 
 settings_filename = "overlay-settings.yml"
-comment = "# yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/status-overlay/main/json_schema/overlay-settings.json\n"
+comment = "# yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/komanager/main/json_schema/overlay-settings.json\n"
 
 def add_blank_lines(yaml_output):
     lines = yaml_output.split('\n')
