@@ -85,7 +85,27 @@ DEFAULTS = {
     'new_movie_use': True,
     'days_new': 90,
     'new_movie_back_color': '#103197',
-    'new_movie_text': 'N E W  R E L E A S E'
+    'new_movie_text': 'N E W  R E L E A S E',
+
+    'top_overlay_use': True,
+    'top_vertical_align': 'top',
+    'top_horizontal_align': 'left',
+    'top_vertical_offset': 105,
+    'top_horizontal_offset': 30,
+    'top_font_size': 45,
+    'top_font_color': '80FF40',
+    'top_back_width': 215,
+    'top_back_height': 70,
+    'top_back_radius': 10,
+    'top_back_color': '#000000B3',
+
+    'top_collection_use': True,
+    'top_visible_home': False,
+    'top_visible_library': True,
+    'top_visible_shared': False,
+    'top_minimum_items': 1,
+    'top_delete_below_minimum': 'true',
+    'top_sort_title': '!020'
 }
 
 timezone = os.getenv('TZ', DEFAULTS['timezone'])
@@ -111,9 +131,40 @@ def get_with_defaults(settings, primary_key, fallback_key=None, config_directory
 
     return value 
 
-############################
-# Create Overlay Template  #
-############################
+def write_yaml_file(config_directory, save_folder, name, file_name, content):
+    if save_folder and isinstance(save_folder, str):
+        save_folder = save_folder.strip()
+        if save_folder == "path/to/folder":
+            save_folder = ''
+    else:
+        save_folder = ''
+
+    if save_folder:
+        logger.info(f"{indentlog2}Using '{name}' save folder: {save_folder}")
+    else:
+        logger.debug(f"{indentlog2}No '{name}' save folder provided.  Using '{config_directory}' folder.")
+        save_folder = config_directory
+
+    if not os.path.exists(save_folder):
+        logger.error(f"{indentlog}'{name}' save folder doesn't exist or permissions not set.  Exiting main script")
+        logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
+        return
+
+    output_file_path = os.path.join(save_folder, f"{file_name}")
+    
+    try:
+        with open(output_file_path, 'w') as file:
+            file.write(content)
+        logger.info(f"{indentlog}Generated {name} at '{output_file_path}'")
+        logger.info("")
+    except Exception as e:
+        logger.error(f"{indentlog}Error generating {name}: {e}")
+        logger.info("")
+
+#########################
+# Create Status Overlay #
+#########################
+
 indentlog = "   " # indent for 3 spaces in log
 indentlog2 = "      " # indent for 6 spaces in log
 indentlog3 = "         " # indent for 9 spaces in log
@@ -162,7 +213,7 @@ def create_library_yaml(config_directory):
             use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
             logger.info(f"{indentlog}Creating main template yaml for {library_name}.")
 
-            template_string = f"""# {library_name} Template
+            status_string = f"""# {library_name} Template
 templates:
   {library_name} Status TMDB Discover:
     sync_mode: sync
@@ -193,8 +244,8 @@ templates:
                 logger.info(f"{indentlog2}'watch_region' set to 'true'")
                 logger.info(f"{indentlog3}Adding 'watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}'.")
                 logger.info(f"{indentlog3}Adding 'with_watch_monetization_type: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}'.")
-                template_string += f"{indent3}watch_region: {get_with_defaults(overlay_settings, 'watch_region')}\n"
-                template_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}\n"
+                status_string += f"{indent3}watch_region: {get_with_defaults(overlay_settings, 'watch_region')}\n"
+                status_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}\n"
 
             else:
                 logger.info(f"{indentlog2}'watch_region' set to 'false'")
@@ -204,13 +255,13 @@ templates:
             if not is_anime:
                 logger.info(f"{indentlog2}'is_anime' set to 'false'")
                 logger.info(f"{indentlog3}Adding 'with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}'.")
-                template_string += f"{indent3}with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}\n"
+                status_string += f"{indent3}with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}\n"
 
             else:
                 logger.info(f"{indentlog2}'is_anime' set to 'true'")
                 logger.info(f"{indentlog3}Removing 'with_original_language'.")
 
-            template_string += f"{indent3}limit: {get_with_defaults(overlay_settings, 'limit', 'limit')}\n"
+            status_string += f"{indent3}limit: {get_with_defaults(overlay_settings, 'limit', 'limit')}\n"
 
             plex_all = f"""
   {library_name} Status Plex All:
@@ -233,9 +284,9 @@ templates:
       back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
     ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
 """
-            template_string += plex_all
+            status_string += plex_all
 
-            template_string += "\noverlays:"
+            status_string += "\noverlays:"
 
             logger.info(f"{indentlog}Main template created")
             logger.info(f"{indentlog}Creating optional overlays")
@@ -261,7 +312,7 @@ templates:
         - production
       release.after: today
 """
-                template_string += upcoming_section
+                status_string += upcoming_section
             else:
                 logger.info(f"{indentlog2}'Upcoming' set to false. 'Upcoming' overlay not created.")
 
@@ -288,7 +339,7 @@ templates:
         - canceled
       first_episode_aired.after: {date_21_days_prior}
 """
-                template_string += new_series_section
+                status_string += new_series_section
             else:
                 logger.info(f"{indentlog2}'New Series' set to false. Creating 'New Series' overaly.")
 
@@ -321,7 +372,7 @@ templates:
     filters:
       first_episode_aired.after: {date_21_days_prior}
 """
-                    template_string += new_airing_next_section
+                    status_string += new_airing_next_section
             else:
                 logger.info(f"{indentlog2}'New Airing Next' set to false. 'New Airing Next' Overlay not created")
                 
@@ -346,7 +397,7 @@ templates:
         - production
       last_episode_aired.after: {date_15_days_prior}
     """
-                template_string += airing_series_section
+                status_string += airing_series_section
 
             else:
                 logger.info(f"{indentlog2}'Airing Series' set to false. 'Airing' Overlay not created.")
@@ -365,7 +416,7 @@ templates:
     variables: {{text: {get_with_defaults(airing_today_settings, 'text', 'today_text')}, weight: 75, font_color: "{get_with_defaults(airing_today_settings, 'font_color', 'font_color')}", back_color: "{get_with_defaults(airing_today_settings, 'back_color', 'airing_back_color')}", date: {air_date_today}, status: 0}}
     template: {{name: {library_name} Status TMDB Discover}}
 """
-                template_string += airing_today_section
+                status_string += airing_today_section
 
             else:
                 logger.info(f"{indentlog2}Airing Today set to false. 'Airing Today' overlay not created")
@@ -399,7 +450,7 @@ templates:
     filters:
       last_episode_aired.after: {date_15_days_prior}
 """
-                    template_string += airing_next_section
+                    status_string += airing_next_section
 
             else:
                 logger.info(f"{indentlog2}'Airing Next' set to false. 'Airing Next' overlay not created.")
@@ -423,7 +474,7 @@ templates:
       tmdb_status:
         - ended
     """
-                template_string += ended_series_section
+                status_string += ended_series_section
             else:
                 logger.info(f"{indentlog2}'Ended Sereies' set to false. 'Ended Series' overlay not created")
             
@@ -446,7 +497,7 @@ templates:
       tmdb_status:
         - canceled
     """
-                template_string += canceled_series_section
+                status_string += canceled_series_section
             else:
                 logger.info(f"{indentlog2}'Canceled Series' set to false. 'Canceled Series' overlay not created.")
             
@@ -471,7 +522,7 @@ templates:
         - planned
         - production
     """
-                template_string += returning_series_section
+                status_string += returning_series_section
             else:
                 logger.info(f"{indentlog2}'Returning' set to false. 'Returning' overlay not created")
 
@@ -504,46 +555,21 @@ templates:
     filters:
       last_episode_aired.before: {date_14_days_prior}
 """
-                    template_string += returns_next_section
+                    status_string += returns_next_section
             else:
                 logger.info(f"{indentlog2}'Returns Next' set to false. 'Returns Next' overlay/s not created")
 
 ############################
-# WRITE TEMPLATE YAML FILE #
+#  WRITE STATUS YAML   #
 ############################
 
             overlay_save_folder = overlay_settings.get('overlay_save_folder')
-
-            if overlay_save_folder and isinstance(overlay_save_folder, str):
-                overlay_save_folder = overlay_save_folder.strip()
-                if overlay_save_folder == "path/to/folder":
-                    overlay_save_folder = ''
-            else:
-                overlay_save_folder = ''
-
-            if overlay_save_folder:
-                logger.info(f"{indentlog2}Using custom overlay save folder: {overlay_save_folder}")
-            else:
-                logger.debug(f"{indentlog2}No custom overlay save folder provided.  Using '{config_directory}' folder.")
-                overlay_save_folder = config_directory
-
-            if not os.path.exists(overlay_save_folder):
-                logger.error(f"{indentlog3}Overlay folder doesn't exist or permissions not set.  Exiting main script")
-                logger.error(f"{indentlog3}If using path outside of mounted container config volume, you need to mount a volume to this.")
-                return
-
+            save_folder = overlay_save_folder
             normalized_library_name = library_name.lower().replace(' ', '-')
+            file_name = f"overlay-status-{normalized_library_name}.yml"
+            name = 'status-overlay'
 
-            output_file_path = os.path.join(overlay_save_folder, f"overlay-status-{normalized_library_name}.yml")
-            
-            try:
-                with open(output_file_path, 'w') as file:
-                    file.write(template_string)
-                logger.info(f"{indentlog}Generated overlay for {library_name} at '{output_file_path}'")
-                logger.info("")
-            except Exception as e:
-                logger.error(f"{indentlog}Error generating overlay for {library_name}: {e}")
-                logger.info("")
+            write_yaml_file(config_directory, save_folder, name, file_name, status_string)
 
     except Exception as e:
         logger.error(f"An error occurred while generating overlay files: {e}")
@@ -586,16 +612,16 @@ def create_collection_yaml(config_directory):
                 if not use_poster:
                     logger.info(f"{indentlog2}'use_poster' set to {use_poster}. Excluding poster setting from collection YAML")
 
-                template_string = f"""# {library_name} Returning Soon Collection
+                collection_string = f"""# {library_name} Returning Soon Collection
 collections:
   {library_name} Returning Soon:
 """
                 if use_poster:
                     poster_source = get_with_defaults(collection_settings, 'poster_source', 'poster_source')
                     poster_path = get_with_defaults(collection_settings, 'poster_path', 'poster_path', config_directory)
-                    template_string += f"{indent2}{poster_source}_poster: \"{poster_path}\"\n"
+                    collection_string += f"{indent2}{poster_source}_poster: \"{poster_path}\"\n"
 
-                template_string += f"""{indent2}collection_order: custom
+                collection_string += f"""{indent2}collection_order: custom
     visible_home: {get_with_defaults(collection_settings, 'visible_home', 'visible_home').lower()}
     visible_shared: {get_with_defaults(collection_settings, 'visible_shared', 'visible_shared').lower()}
     visible_library: {get_with_defaults(collection_settings, 'visible_library', 'visible_library').lower()}
@@ -614,8 +640,8 @@ collections:
                     logger.info(f"{indentlog2}'watch_region' set to 'true'")
                     logger.info(f"{indentlog3}Adding 'watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}'.")
                     logger.info(f"{indentlog3}Adding 'with_watch_monetization_type: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}'.")
-                    template_string += f"{indent3}watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}\n"
-                    template_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}\n"
+                    collection_string += f"{indent3}watch_region: {get_with_defaults(overlay_settings, 'watch_region', 'watch_region')}\n"
+                    collection_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(overlay_settings, 'with_watch_monetization_types', 'with_watch_monetization_types')}\n"
 
                 else:
                     logger.info(f"{indentlog2}'watch_region' set to 'false'")
@@ -625,54 +651,28 @@ collections:
                 if not is_anime:
                     logger.info(f"{indentlog2}'is_anime' set to 'false'")
                     logger.info(f"{indentlog3}Adding 'with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}'.")
-                    template_string += f"{indent3}with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}\n"
+                    collection_string += f"{indent3}with_original_language: {get_with_defaults(overlay_settings, 'with_original_language', 'with_original_language')}\n"
 
                 else:
                     logger.info(f"{indentlog2}'is_anime' set to 'true'")
                     logger.info(f"{indentlog3}Removing 'with_original_language'.")
 
-                template_string += f"{indent3}limit: {get_with_defaults(overlay_settings, 'limit', 'limit')}\n"
+                collection_string += f"{indent3}limit: {get_with_defaults(overlay_settings, 'limit', 'limit')}\n"
                 
-                template_string += f"{indent2}filters:\n"
-                template_string += f"{indent3}last_episode_aired.before: {date_last_aired}\n"
+                collection_string += f"{indent2}filters:\n"
+                collection_string += f"{indent3}last_episode_aired.before: {date_last_aired}\n"
 
 ############################
 #  WRITE COLLECTION YAML   #
 ############################
 
                 collection_save_folder = collection_settings.get('collection_save_folder')
-
-                if collection_save_folder and isinstance(collection_save_folder, str):
-                    collection_save_folder = collection_save_folder.strip()
-                    if collection_save_folder == "path/to/folder":
-                        collection_save_folder = ''
-                else:
-                    collection_save_folder = ''
-
-                if collection_save_folder:
-                    logger.info(f"{indentlog2}Using custom collection save folder: {collection_save_folder}")
-                else:
-                    logger.debug(f"{indentlog2}No custom collection save folder provided.  Using '{config_directory}' folder.")
-                    collection_save_folder = config_directory
-
-                if not os.path.exists(collection_save_folder):
-                    logger.error(f"{indentlog}Collection folder doesn't exist or permissions not set.  Exiting main script")
-                    logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
-                    return
-
+                save_folder = collection_save_folder
                 normalized_library_name = library_name.lower().replace(' ', '-')
+                file_name = f"collection-returning-soon-{normalized_library_name}.yml"
+                name = 'returning-soon-collection'
 
-                output_file_path = os.path.join(collection_save_folder, f"collection-returning-soon-{normalized_library_name}.yml")
-                
-                try:
-                    with open(output_file_path, 'w') as file:
-                        file.write(template_string)
-                    logger.info(f"{indentlog}Generated Returning Soon Collection for {library_name} at '{output_file_path}'")
-                    logger.info("")
-                except Exception as e:
-                    logger.error(f"{indentlog}Error generating collection for {library_name}: {e}")
-                    logger.info("")
-
+                write_yaml_file(config_directory, save_folder, name, file_name, collection_string)
 
             else:
                 logger.info(f"{indentlog2}'Returning Soon' collection 'use:' set to false. 'Returning Soon' collection not created")
@@ -781,35 +781,12 @@ collections:
 ###############################
 
             in_history_save_folder = in_history_settings.get('in_history_save_folder')
+            save_folder = in_history_save_folder
+            file_name = "collection-in-history.yml"
+            name = 'in-history-collection'
 
-            if in_history_save_folder and isinstance(in_history_save_folder, str):
-                in_history_save_folder = in_history_save_folder.strip()
-                if in_history_save_folder == "path/to/folder":
-                    in_history_save_folder = ''
-            else:
-                in_history_save_folder = ''
+            write_yaml_file(config_directory, save_folder, name, file_name, in_history_string)
 
-            if in_history_save_folder:
-                logger.info(f"{indentlog2}Using 'in_history' save folder: {in_history_save_folder}")
-            else:
-                logger.debug(f"{indentlog2}No 'in_history' save folder provided.  Using '{config_directory}' folder.")
-                in_history_save_folder = config_directory
-
-            if not os.path.exists(in_history_save_folder):
-                logger.error(f"{indentlog}'in_history' save folder doesn't exist or permissions not set.  Exiting main script")
-                logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
-                return
-
-            output_file_path = os.path.join(in_history_save_folder, f"collection-in-history.yml")
-            
-            try:
-                with open(output_file_path, 'w') as file:
-                    file.write(in_history_string)
-                logger.info(f"{indentlog}Generated 'in-history' collection at '{output_file_path}'")
-                logger.info("")
-            except Exception as e:
-                logger.error(f"{indentlog}Error generating 'in-history' collection: {e}")
-                logger.info("")
         else:
             logger.info(f"{indentlog2}'in-history' set to false. 'new_movie_relase_date' overlay not created")
             logger.info("")
@@ -861,38 +838,205 @@ overlays:
 ################################
 
             new_movie_save_folder = new_release_settings.get('new_movie_save_folder')
+            save_folder = new_movie_save_folder
+            file_name = f"overlay-movie-new-release.yml"
+            name = 'new-release-overlay'
 
-            if new_movie_save_folder and isinstance(new_movie_save_folder, str):
-                new_movie_save_folder = new_movie_save_folder.strip()
-                if new_movie_save_folder == "path/to/folder":
-                    new_movie_save_folder = ''
-            else:
-                new_movie_save_folder = ''
+            write_yaml_file(config_directory, save_folder, name, file_name, new_movie_string)
 
-            if new_movie_save_folder:
-                logger.info(f"{indentlog2}Using 'movie_new_release' save folder: {new_movie_save_folder}")
-            else:
-                logger.debug(f"{indentlog2}No 'movie_new_release' save folder provided.  Using '{config_directory}' folder.")
-                new_movie_save_folder = config_directory
-
-            if not os.path.exists(new_movie_save_folder):
-                logger.error(f"{indentlog}'movie_new_release' folder doesn't exist or permissions not set.  Exiting main script")
-                logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
-                return
-
-            output_file_path = os.path.join(new_movie_save_folder, "overlay-movie-new-release.yml")
-            
-            try:
-                with open(output_file_path, 'w') as file:
-                    file.write(new_movie_string)
-                logger.info(f"{indentlog}Generated 'movie_new_release' overlay for at '{output_file_path}'")
-                logger.info("")
-            except Exception as e:
-                logger.error(f"{indentlog}Error generating 'movie_new_release' overlay: {e}")
-                logger.info("")
         else:
             logger.info(f"{indentlog2}'movie_new_release' set to false. 'new_movie_relase_date' overlay not created")
             logger.info("")
             
     except Exception as e:
         logger.error(f"An error occurred while 'movie_new_release' overlay file: {e}")
+
+##################
+# Top 10 Overlay #
+##################
+
+def create_top10_overlay_yaml(config_directory):
+    try:
+        settings = load_settings(config_directory, log_message=False)
+        
+        top_overlay_settings = settings.get('top_10', {}).get('top_10_overlay', {})
+
+        if get_with_defaults(top_overlay_settings, "use", "top_overlay_use"):
+            logger.info(f"{indentlog}'top_10' overlay 'use:' set to true. Creating 'top_10' overlay.")
+
+            top_overlay_string = f"""# Top 10 Overlay
+templates:
+  Top 10 Overlay:
+    overlay:
+      name: text(TOP 10)
+      group: top10
+      weight: <<weight>>
+      font: "{get_with_defaults(top_overlay_settings, 'font', 'font', config_directory)}"
+      font_size: {get_with_defaults(top_overlay_settings, 'font_size', 'top_font_size')}
+      font_color: "{get_with_defaults(top_overlay_settings, 'font_color', 'top_font_color')}"
+      horizontal_align: {get_with_defaults(top_overlay_settings, 'horizontal_align', 'top_horizontal_align')}
+      vertical_align: {get_with_defaults(top_overlay_settings, 'vertical_align', 'top_vertical_align')}
+      horizontal_offset: {get_with_defaults(top_overlay_settings, 'horizontal_offset', 'top_horizontal_offset')}
+      vertical_offset: {get_with_defaults(top_overlay_settings, 'vertical_offset', 'top_vertical_offset')}
+      back_color: "{get_with_defaults(top_overlay_settings, 'back_color', 'top_back_color')}"
+      back_width: {get_with_defaults(top_overlay_settings, 'back_width', 'top_back_width')}
+      back_height: {get_with_defaults(top_overlay_settings, 'back_height', 'top_back_height')}
+      back_radius: {get_with_defaults(top_overlay_settings, 'back_radius', 'top_back_radius')}
+
+overlays:
+  
+  Netflix Top 10:
+    variables: {{key: netflix, weight: 60}}
+    template: [name: Top 10 Overlay]
+    trakt_list:
+      - https://trakt.tv/users/navino16/lists/netflix-united-states-top10-with-united-kingdom-fallback
+
+  Disney Top 10:
+    variables: {{key: disney, weight: 50}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/disney-world-top10-without-fallback
+
+  Max Top 10:
+    variables: {{key: max, weight: 40}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/hbo-united-states-top10-with-united-kingdom-fallback
+
+  Hulu Top 10:
+    variables: {{key: hulu, weight: 30}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      -  https://trakt.tv/users/navino16/lists/hulu-united-states-top10-with-world-fallback 
+
+  Paramount Top 10:
+    variables: {{key: paramount, weight: 20}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/paramount-plus-united-states-top10-with-united-kingdom-fallback
+    
+  Prime Top 10:
+    variables: {{key: prime, weight: 10}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/amazon-prime-united-states-top10-with-united-kingdom-fallback
+    
+  Apple Top 10:
+    variables: {{key: apple, weight: 9}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/apple-tv-united-states-top10-with-united-kingdom-fallback
+
+  Starz Top 10:
+    variables: {{key: starz, weight: 8}}
+    template: [name: Top 10 Overlay]
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/starz-united-states-top10-with-united-kingdom-fallback
+"""
+            
+########################
+# Top 10 Overlay Write #
+########################
+
+            top_10_save_folder = top_overlay_settings.get('overlay_save_folder')
+            save_folder = top_10_save_folder
+            file_name = 'overlay-top10.yml'
+            name = 'top-10-overlay'
+
+            write_yaml_file(config_directory, save_folder, name, file_name, top_overlay_string)
+
+        else:
+            logger.info(f"{indentlog2}'top_10_overlay' set to false. 'top_10' overlay not created")
+            logger.info("")
+            
+    except Exception as e:
+        logger.error(f"An error occurred while creating 'top_10' overlay file: {e}")
+
+#####################
+# Top 10 Collection #
+#####################
+
+def create_top10_collection_yaml(config_directory):
+    try:
+        settings = load_settings(config_directory, log_message=False)
+        
+        top_collection_settings = settings.get('top_10', {}).get('top_10_collection', {})
+
+        if get_with_defaults(top_collection_settings, "use", "top_collection_use"):
+            logger.info(f"{indentlog}'top_10 collection' 'use:' set to true. Creating 'top_10' collection.")
+
+            top_collection_string = f"""# Top 10 Collection
+templates:
+  Top 10:
+    collection_order: custom
+    collection_mode: default
+    sort_title: "{get_with_defaults(top_collection_settings, 'sort_title_prefix', 'top_sort_title')}_<<collection_name>>"
+    sync_mode: sync
+    url_poster: <<poster>>
+    visible_home: {get_with_defaults(top_collection_settings, 'visible_home', 'top_visible_home').lower()}
+    visible_shared: {get_with_defaults(top_collection_settings, 'visible_shared', 'top_visible_shared').lower()}
+    visible_library: {get_with_defaults(top_collection_settings, 'visible_library', 'top_visible_library').lower()}
+    summary: "Movies/shows currently in the <<collection_name>>"
+    minimum_items: {get_with_defaults(top_collection_settings, 'minimum_items', 'top_minimum_items')}
+    delete_below_minimum: {get_with_defaults(top_collection_settings, 'delete_below_minimum', 'top_delete_below_minimum').lower()}
+
+collections:
+  Netflix Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/netflix_top.jpg}}
+    trakt_list:
+      - https://trakt.tv/users/navino16/lists/netflix-united-states-top10-with-united-kingdom-fallback
+
+  Max Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/max_top.jpg}}
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/hbo-united-states-top10-with-united-kingdom-fallback
+
+  Prime Video Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/prime_top.jpg}}
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/amazon-prime-united-states-top10-with-united-kingdom-fallback
+
+  Paramount+ Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/paramount_top.jpg}}
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/paramount-plus-united-states-top10-with-united-kingdom-fallback
+
+  Hulu Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/hulu_top.jpg}}
+    trakt_list: 
+      -  https://trakt.tv/users/navino16/lists/hulu-united-states-top10-with-world-fallback
+
+  Disney+ Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/disney_top.jpg}}
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/disney-world-top10-without-fallback
+
+  Starz Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/starz_top_10.jpg}}
+    trakt_list:
+      - https://trakt.tv/users/navino16/lists/starz-united-states-top10-with-united-kingdom-fallback
+
+  Apple TV+ Top 10:
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/apple_top.jpg}}
+    trakt_list: 
+      - https://trakt.tv/users/navino16/lists/apple-tv-united-states-top10-with-united-kingdom-fallback
+
+"""
+
+###########################
+# Top 10 Collection Write #
+###########################
+
+            collection_save_folder = top_collection_settings.get('collection_save_folder')
+            save_folder = collection_save_folder
+            file_name = 'collection-top10.yml'
+            name = 'top-10-collection'
+
+            write_yaml_file(config_directory, save_folder, name, file_name, top_collection_string)
+
+        else:
+            logger.info(f"{indentlog2}'top_10_collection' set to false. 'top_10 collection' not created")
+            logger.info("")
+            
+    except Exception as e:
+        logger.error(f"An error occurred while creating 'top_10 collection' file: {e}")

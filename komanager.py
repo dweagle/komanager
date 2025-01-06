@@ -9,7 +9,7 @@ from scripts.logger import log_setup
 from scripts.scheduler import schedule_main, scheduler
 from scripts.settings import create_settings_file, update_settings_file
 from scripts.validate_settings import validate_settings
-from scripts.yaml_generator import create_library_yaml, create_collection_yaml, create_new_movie_yaml, create_in_history_yaml
+from scripts.yaml_generator import create_library_yaml, create_collection_yaml, create_new_movie_yaml, create_in_history_yaml, create_top10_overlay_yaml, create_top10_collection_yaml
 
 logger = logging.getLogger(__name__)
 schedule_logger = logging.getLogger('schedule')
@@ -22,7 +22,7 @@ config_directory = '/config' if in_docker else os.path.join(os.getcwd(), 'config
 if not os.path.exists(config_directory):
     os.makedirs(config_directory, exist_ok=True)
 
-settings_file_path = os.path.join(config_directory, "overlay-settings.yml")
+settings_file_path = os.path.join(config_directory, "settings.yml")
 
 font_src = '/fonts' if in_docker else os.path.join(os.getcwd(), 'fonts')
 font_dest = os.path.join(config_directory, 'fonts')
@@ -117,6 +117,8 @@ def main_logic():
         create_collection_yaml(config_directory)
         create_in_history_yaml(config_directory)
         create_new_movie_yaml(config_directory)
+        create_top10_overlay_yaml(config_directory)
+        create_top10_collection_yaml(config_directory)
 
         logger.info("All library overlay and collection files created.")
         logger.info("----------------------------------------------------------")

@@ -7,7 +7,7 @@ from scripts.settings import load_settings
 yaml = YAML()
 
 logger = logging.getLogger(__name__)
-settings_filename = "overlay-settings.yml"
+settings_filename = "settings.yml"
 
 indentlog = "   " # indent for 3 spaces in log
 indentlog2 = "      " # indent for 6 spaces in log
@@ -30,7 +30,7 @@ def validate_settings(config_directory):
             logger.error(f"{indentlog}Settings file format is invalid. Expected a dictionary.")
             return False
 
-        required_sections = ['libraries', 'overlay_settings', 'use_overlays', 'returning_soon_collection', 'movie_new_release', 'in_history_collection']
+        required_sections = ['libraries', 'overlay_settings', 'use_overlays', 'returning_soon_collection', 'movie_new_release', 'in_history_collection', 'top_10']
         for section in required_sections:
             if section not in settings or not isinstance(settings[section], dict) or not settings[section]:
                 logger.error(f"{indentlog}The settings file does not contain a valid '{section}' section or it is empty.")
@@ -42,11 +42,13 @@ def validate_settings(config_directory):
             return False
         if not validate_use_overlays(settings['use_overlays']):
             return False
+        if not validate_movie_new_release(settings['movie_new_release'], config_directory):
+            return False
         if not validate_returning_soon_collection(settings['returning_soon_collection'], config_directory):
             return False
         if not validate_in_history_collection(settings['in_history_collection'], config_directory):
             return False
-        if not validate_movie_new_release(settings['movie_new_release'], config_directory):
+        if not validate_top_10(settings['top_10'], config_directory):
             return False
 
         return True
@@ -110,6 +112,19 @@ def validate_use_overlays(use_overlays):
 
     return True
 
+def validate_movie_new_release(movie_new_release_settings, config_directory):
+    logger.info("")
+    logger.info(f"{indentlog}movie_new_release:")
+
+    validate_boolean_setting(movie_new_release_settings, 'use', True)
+    validate_path_setting(movie_new_release_settings, 'new_movie_save_folder', config_directory, True)
+    validate_integer_setting(movie_new_release_settings, 'days_to_consider_new', 90, 1, 90)
+    validate_color_setting(movie_new_release_settings, 'back_color', '#008001')
+    validate_string_setting(movie_new_release_settings, 'text', 'default_text')
+    validate_color_setting(movie_new_release_settings, 'font_color', '#FFFFFF')
+
+    return True
+
 def validate_returning_soon_collection(collection_settings, config_directory):
     logger.info("")
     logger.info(f"{indentlog}returning_soon_collection:")
@@ -152,16 +167,44 @@ def validate_in_history_collection(in_history_settings, config_directory):
 
     return True
 
-def validate_movie_new_release(movie_new_release_settings, config_directory):
+def validate_top_10(top_10_settings, config_directory):
     logger.info("")
-    logger.info(f"{indentlog}movie_new_release:")
+    logger.info(f"{indentlog}top_10:")
 
-    validate_boolean_setting(movie_new_release_settings, 'use', True)
-    validate_path_setting(movie_new_release_settings, 'new_movie_save_folder', config_directory, True)
-    validate_integer_setting(movie_new_release_settings, 'days_to_consider_new', 90, 1, 90)
-    validate_color_setting(movie_new_release_settings, 'back_color', '#008001')
-    validate_string_setting(movie_new_release_settings, 'text', 'default_text')
-    validate_color_setting(movie_new_release_settings, 'font_color', '#FFFFFF')
+    if 'top_10_overlay' in top_10_settings:
+        logger.info(f"{indentlog2}top_10_overlay:")
+        overlay_settings = top_10_settings['top_10_overlay']
+        validate_boolean_setting(overlay_settings, 'use', True)
+        validate_path_setting(overlay_settings, 'overlay_save_folder', config_directory, True)
+        validate_choice_setting(overlay_settings, 'vertical_align', ['top', 'center', 'bottom'], 'top')
+        validate_choice_setting(overlay_settings, 'horizontal_align', ['left', 'center', 'right'], 'left')
+        validate_integer_setting(overlay_settings, 'vertical_offset', 105, 0, None)
+        validate_integer_setting(overlay_settings, 'horizontal_offset', 30, 0, None)
+        validate_path_setting(overlay_settings, 'font', config_directory, True)
+        validate_integer_setting(overlay_settings, 'font_size', 45, 1, None)
+        validate_color_setting(overlay_settings, 'font_color', '#80FF40')
+        validate_integer_setting(overlay_settings, 'back_width', 215, 0, None)
+        validate_integer_setting(overlay_settings, 'back_height', 70, 0, None)
+        validate_integer_setting(overlay_settings, 'back_radius', 10, 0, None)
+        validate_color_setting(overlay_settings, 'back_color', '#000000B3')
+    else:
+        logger.error(f"{indentlog2}Missing 'top_10_overlay' section in 'top_10' settings.")
+        return False
+
+    if 'top_10_collection' in top_10_settings:
+        logger.info(f"{indentlog2}top_10_collection:")
+        collection_settings = top_10_settings['top_10_collection']
+        validate_boolean_setting(collection_settings, 'use', True)
+        validate_path_setting(collection_settings, 'collection_save_folder', config_directory, True)
+        validate_choice_setting(collection_settings, 'visible_home', ['true', 'false', True, False], 'false')
+        validate_choice_setting(collection_settings, 'visible_library', ['true', 'false', True, False], 'true')
+        validate_choice_setting(collection_settings, 'visible_shared', ['true', 'false', True, False], 'false')
+        validate_integer_setting(collection_settings, 'minimum_items', 1, 1, None)
+        validate_choice_setting(collection_settings, 'delete_below_minimum', ['true', 'false', True, False], 'true')
+        validate_string_setting(collection_settings, 'sort_title_prefix', '!020', True)
+    else:
+        logger.error(f"{indentlog2}Missing 'top_10_collection' section in 'top_10' settings.")
+        return False
 
     return True
 
