@@ -255,6 +255,10 @@ def update_dict(existing, defaults):
     updated = CommentedMap()
 
     for key, value in defaults.items():
+        if key == "libraries":
+            if key in existing:
+                updated[key] = existing[key]
+            continue
         if key in existing:
             if isinstance(value, dict):
                 updated[key] = update_dict(existing[key], value)
@@ -279,18 +283,14 @@ def update_settings_file(main_directory):
         updated_settings = update_dict(existing_settings, settings)
         settings_changed = existing_settings != updated_settings
 
-        # First dump to update settings
         with open(settings_file_path, 'w') as file:
             yaml.dump(updated_settings, file)
 
-        # Reload the settings to apply comments
         with open(settings_file_path, 'r') as file:
             updated_settings_with_comments = yaml.load(file)
 
-        # Add or update comments
         add_comments(updated_settings_with_comments)
 
-        # Second dump to update comments
         with open(settings_file_path, 'w') as file:
             yaml.dump(updated_settings_with_comments, file)
 
