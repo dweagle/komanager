@@ -210,12 +210,12 @@ def add_comments(settings):
     settings.yaml_set_comment_before_after_key("libraries", before=" yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/komanager/main/json_schema/settings.json\n\n")
 
     # Section comments and spacing
-    settings.yaml_set_comment_before_after_key("libraries", before="Plex libraries to create overlays for. Library type is 'show' or 'movie'.")
-    settings.yaml_set_comment_before_after_key("status_overlay", before="\nSettings for Show Status Overlay and movie New Release overlay.")
+    settings.yaml_set_comment_before_after_key("libraries", before="Plex libraries to create overlays/collections for. Library type is 'show' or 'movie'.")
+    settings.yaml_set_comment_before_after_key("status_overlay", before="\nSettings for Status Overlay ('show' libraries only).")
     settings["status_overlay"].yaml_set_comment_before_after_key("overlay_settings", before="  Adjust overlay position, size, font, TMDB settings, save location, etc.")
     settings["status_overlay"].yaml_set_comment_before_after_key("use_overlays", before="  Turn overlays off/on, adjust font color, back color, and text")
     settings.yaml_set_comment_before_after_key("movie_new_release", before="\nNew Movie Release Settings - Uses 'status_overlay: overlay_settings'.")
-    settings.yaml_set_comment_before_after_key("returning_soon_collection", before="\nReturning Soon Collection Settings")
+    settings.yaml_set_comment_before_after_key("returning_soon_collection", before="\nReturning Soon Collection Settings ('show' libraries only)")
     settings.yaml_set_comment_before_after_key("in_history_collection", before="\nIn History Collection Settings")
     settings.yaml_set_comment_before_after_key("top_10", before="\nTop 10 Overlay and Collection Settings")
 
