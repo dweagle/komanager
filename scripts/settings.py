@@ -207,20 +207,20 @@ def add_comments(settings):
     max_key_length = max(len(key) for key in settings.keys())
 
     # Schema comment
-    settings.yaml_set_comment_before_after_key("libraries", before=" yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/komanager/main/json_schema/settings.json\n\n")
+    settings.yaml_set_start_comment("yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/komanager/main/json_schema/settings.json\n\n")
 
     # Section comments and spacing
     settings.yaml_set_comment_before_after_key("libraries", before="Plex libraries to create overlays/collections for. Library type is 'show' or 'movie'.")
     settings.yaml_set_comment_before_after_key("status_overlay", before="\nSettings for Status Overlay ('show' libraries only).")
-    settings["status_overlay"].yaml_set_comment_before_after_key("overlay_settings", before="  Adjust overlay position, size, font, TMDB settings, save location, etc.")
-    settings["status_overlay"].yaml_set_comment_before_after_key("use_overlays", before="  Turn overlays off/on, adjust font color, back color, and text")
     settings.yaml_set_comment_before_after_key("movie_new_release", before="\nNew Movie Release Settings - Uses 'status_overlay: overlay_settings'.")
     settings.yaml_set_comment_before_after_key("returning_soon_collection", before="\nReturning Soon Collection Settings ('show' libraries only)")
     settings.yaml_set_comment_before_after_key("in_history_collection", before="\nIn History Collection Settings")
     settings.yaml_set_comment_before_after_key("top_10", before="\nTop 10 Overlay and Collection Settings")
 
     # End of line comments
-    settings.yaml_add_eol_comment("Kometa must have permissions for save, font, and poster paths.", "overlay_save_folder", column=max_key_length + 5)
+    settings["status_overlay"].yaml_add_eol_comment("Adjust overlay position, size, font, TMDB settings, save location, etc.", "overlay_settings", column=max_key_length + 30)
+    settings["status_overlay"]["overlay_settings"].yaml_add_eol_comment("Kometa must have permissions for save, font, and poster paths.", "overlay_save_folder", column=max_key_length + 30)
+    settings["status_overlay"].yaml_add_eol_comment("Turn overlays off/on, adjust font color, back color, and text.", "use_overlays", column=max_key_length + 30)
 
 def create_settings_file(main_directory, run_now, run_now_env, in_docker):
     settings_file_path = os.path.join(main_directory, settings_filename)
