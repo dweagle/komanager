@@ -209,10 +209,11 @@ def create_library_yaml(config_directory):
             day_format_code = "%d"
 
         for library_name, library_settings in libraries.items():
-            if library_settings.get('library_type') == 'show':
-                is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
-                use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
-                logger.info(f"{indentlog}Creating main template yaml for {library_name}.")
+            if library_settings.get('library_type') != 'show':
+                continue
+            is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
+            use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
+            logger.info(f"{indentlog}Creating main template yaml for {library_name}.")
 
             status_string = f"""# {library_name} Template
 templates:
@@ -659,6 +660,8 @@ def create_collection_yaml(config_directory):
         collection_days_past = (current_date + timedelta(days=collection_days_ahead)).strftime('%m/%d/%Y')
 
         for library_name, library_settings in libraries.items():
+            if library_settings.get('library_type') != 'show':
+                continue
             is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
             use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
             
