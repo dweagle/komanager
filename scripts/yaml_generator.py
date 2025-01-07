@@ -140,13 +140,13 @@ def write_yaml_file(config_directory, save_folder, name, file_name, content):
         save_folder = ''
 
     if save_folder:
-        logger.info(f"{indentlog2}Using '{name}' save folder: {save_folder}")
+        logger.info(f"{indentlog2}Using {name} save folder: {save_folder}")
     else:
-        logger.debug(f"{indentlog2}No '{name}' save folder provided.  Using '{config_directory}' folder.")
+        logger.debug(f"{indentlog2}No {name} save folder provided.  Using '{config_directory}' folder.")
         save_folder = config_directory
 
     if not os.path.exists(save_folder):
-        logger.error(f"{indentlog}'{name}' save folder doesn't exist or permissions not set.  Exiting main script")
+        logger.error(f"{indentlog}{name} save folder doesn't exist or permissions not set.  Exiting main script")
         logger.error(f"{indentlog}If using path outside of mounted container config volume, you need to mount a volume to this.")
         return
 
@@ -189,9 +189,9 @@ def create_library_yaml(config_directory):
 
         libraries = settings.get('libraries', {})
 
-        overlay_settings = settings.get('overlay_settings', {})
+        overlay_settings = settings.get('status_overlay', {}).get('overlay_settings', {})
 
-        use_overlays = settings.get('use_overlays', {})
+        use_overlays = settings.get('status_overlay', {}).get('use_overlays', {})
 
         date_delimiter = get_with_defaults(overlay_settings, 'date_delimiter', '/')
         
@@ -209,9 +209,10 @@ def create_library_yaml(config_directory):
             day_format_code = "%d"
 
         for library_name, library_settings in libraries.items():
-            is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
-            use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
-            logger.info(f"{indentlog}Creating main template yaml for {library_name}.")
+            if library_settings.get('library_type') == 'show':
+                is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
+                use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
+                logger.info(f"{indentlog}Creating main template yaml for {library_name}.")
 
             status_string = f"""# {library_name} Template
 templates:
@@ -567,12 +568,69 @@ templates:
             save_folder = overlay_save_folder
             normalized_library_name = library_name.lower().replace(' ', '-')
             file_name = f"overlay-status-{normalized_library_name}.yml"
-            name = 'status-overlay'
+            name = 'Show Status Overlay'
 
             write_yaml_file(config_directory, save_folder, name, file_name, status_string)
 
     except Exception as e:
-        logger.error(f"An error occurred while generating overlay files: {e}")
+        logger.error(f"An error occurred while generating 'Show Status Overlay' files: {e}")
+
+#############################
+# NEW MOVIE RELEASE OVERLAY #
+#############################
+
+def create_new_movie_yaml(config_directory):
+    try:
+        settings = load_settings(config_directory, log_message=False)
+        
+        overlay_settings = settings.get('status_overlay', {}).get('overlay_settings', {})
+
+        new_release_settings = settings.get('movie_new_release', {})
+
+        if get_with_defaults(new_release_settings, "use", "new_movie_use"):
+            logger.info(f"{indentlog}'movie_new_release' 'use:' set to true. Creating 'movie_new_release' overlay.")
+
+            new_movie_string = f"""# New Release Overlay
+overlays:
+  Movie New Release:
+    sync_mode: sync
+    builder_level: movie
+    overlay:
+      name: text({get_with_defaults(new_release_settings, 'text', 'new_movie_text')})
+      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
+      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
+      font_color: "{get_with_defaults(new_release_settings, 'font_color', 'font_color')}"
+      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
+      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'veritcal_align')}
+      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
+      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
+      back_color: "{get_with_defaults(new_release_settings, 'back_color', 'new_movie_back_color')}"
+      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
+      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
+      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
+    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+    plex_search:
+      all:
+        release: {get_with_defaults(new_release_settings, 'days_to_consider_new', 'days_new')}
+"""
+
+################################
+# WRITE MOVIE NEW RELEASE YAML #
+################################
+
+            new_movie_save_folder = new_release_settings.get('new_movie_save_folder')
+            save_folder = new_movie_save_folder
+            file_name = f"overlay-movie-new-release.yml"
+            name = 'New Release Overlay'
+
+            write_yaml_file(config_directory, save_folder, name, file_name, new_movie_string)
+
+        else:
+            logger.info(f"{indentlog2}'movie_new_release' set to false. 'new_movie_relase_date' overlay not created")
+            logger.info("")
+            
+    except Exception as e:
+        logger.error(f"An error occurred while 'movie_new_release' overlay file: {e}")
 
 #############################
 # RETURNING SOON COLLECTION #
@@ -584,7 +642,7 @@ def create_collection_yaml(config_directory):
         
         libraries = settings.get('libraries', {})
 
-        overlay_settings = settings.get('overlay_settings', {})
+        overlay_settings = settings.get('status_overlay_settings', {}).get('overlay_settings', {})
 
         collection_settings = settings.get('returning_soon_collection', {})
 
@@ -670,16 +728,16 @@ collections:
                 save_folder = collection_save_folder
                 normalized_library_name = library_name.lower().replace(' ', '-')
                 file_name = f"collection-returning-soon-{normalized_library_name}.yml"
-                name = 'returning-soon-collection'
+                name = 'Returning Soon Collection'
 
                 write_yaml_file(config_directory, save_folder, name, file_name, collection_string)
 
             else:
-                logger.info(f"{indentlog2}'Returning Soon' collection 'use:' set to false. 'Returning Soon' collection not created")
+                logger.info(f"{indentlog2}Returning Soon Collection 'use:' set to false. Returning Soon Collection not created")
                 logger.info("")
 
     except Exception as e:
-        logger.error(f"An error occurred while generating collection files: {e}")
+        logger.error(f"An error occurred while generating 'Returning Soon Collection' files: {e}")
 
 #########################
 # IN HISTORY COLLECTION #
@@ -783,73 +841,16 @@ collections:
             in_history_save_folder = in_history_settings.get('in_history_save_folder')
             save_folder = in_history_save_folder
             file_name = "collection-in-history.yml"
-            name = 'in-history-collection'
+            name = f'This {title_range} in History Collection'
 
             write_yaml_file(config_directory, save_folder, name, file_name, in_history_string)
 
         else:
-            logger.info(f"{indentlog2}'in-history' set to false. 'new_movie_relase_date' overlay not created")
+            logger.info(f"{indentlog2}'in-history' set to false. 'In History Collection' not created")
             logger.info("")
             
     except Exception as e:
-        logger.error(f"An error occurred while 'movie_new_release' overlay file: {e}")
-
-#############################
-# NEW MOVIE RELEASE OVERLAY #
-#############################
-
-def create_new_movie_yaml(config_directory):
-    try:
-        settings = load_settings(config_directory, log_message=False)
-        
-        overlay_settings = settings.get('overlay_settings', {})
-
-        new_release_settings = settings.get('movie_new_release', {})
-
-        if get_with_defaults(new_release_settings, "use", "new_movie_use"):
-            logger.info(f"{indentlog}'movie_new_release' 'use:' set to true. Creating 'movie_new_release' overlay.")
-
-            new_movie_string = f"""# New Release Overlay
-overlays:
-  Movie New Release:
-    sync_mode: sync
-    builder_level: movie
-    overlay:
-      name: text({get_with_defaults(new_release_settings, 'text', 'new_movie_text')})
-      font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
-      font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
-      font_color: "{get_with_defaults(new_release_settings, 'font_color', 'font_color')}"
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'veritcal_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(new_release_settings, 'back_color', 'new_movie_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
-    plex_search:
-      all:
-        release: {get_with_defaults(new_release_settings, 'days_to_consider_new', 'days_new')}
-"""
-
-################################
-# WRITE MOVIE NEW RELEASE YAML #
-################################
-
-            new_movie_save_folder = new_release_settings.get('new_movie_save_folder')
-            save_folder = new_movie_save_folder
-            file_name = f"overlay-movie-new-release.yml"
-            name = 'new-release-overlay'
-
-            write_yaml_file(config_directory, save_folder, name, file_name, new_movie_string)
-
-        else:
-            logger.info(f"{indentlog2}'movie_new_release' set to false. 'new_movie_relase_date' overlay not created")
-            logger.info("")
-            
-    except Exception as e:
-        logger.error(f"An error occurred while 'movie_new_release' overlay file: {e}")
+        logger.error(f"An error occurred while creating 'In History Collection' file: {e}")
 
 ##################
 # Top 10 Overlay #
@@ -941,7 +942,7 @@ overlays:
             top_10_save_folder = top_overlay_settings.get('overlay_save_folder')
             save_folder = top_10_save_folder
             file_name = 'overlay-top10.yml'
-            name = 'top-10-overlay'
+            name = 'Top 10 Overlay'
 
             write_yaml_file(config_directory, save_folder, name, file_name, top_overlay_string)
 
@@ -950,7 +951,7 @@ overlays:
             logger.info("")
             
     except Exception as e:
-        logger.error(f"An error occurred while creating 'top_10' overlay file: {e}")
+        logger.error(f"An error occurred while creating 'Top 10 Overlay' file: {e}")
 
 #####################
 # Top 10 Collection #
@@ -963,7 +964,7 @@ def create_top10_collection_yaml(config_directory):
         top_collection_settings = settings.get('top_10', {}).get('top_10_collection', {})
 
         if get_with_defaults(top_collection_settings, "use", "top_collection_use"):
-            logger.info(f"{indentlog}'top_10 collection' 'use:' set to true. Creating 'top_10' collection.")
+            logger.info(f"{indentlog}'top_10_collection' 'use:' set to true. Creating 'top_10' collection.")
 
             top_collection_string = f"""# Top 10 Collection
 templates:
@@ -976,7 +977,7 @@ templates:
     visible_home: {get_with_defaults(top_collection_settings, 'visible_home', 'top_visible_home').lower()}
     visible_shared: {get_with_defaults(top_collection_settings, 'visible_shared', 'top_visible_shared').lower()}
     visible_library: {get_with_defaults(top_collection_settings, 'visible_library', 'top_visible_library').lower()}
-    summary: "Movies/shows currently in the <<collection_name>>"
+    summary: "Movies/shows currently in the <<collection_name>>."
     minimum_items: {get_with_defaults(top_collection_settings, 'minimum_items', 'top_minimum_items')}
     delete_below_minimum: {get_with_defaults(top_collection_settings, 'delete_below_minimum', 'top_delete_below_minimum').lower()}
 
@@ -1030,13 +1031,13 @@ collections:
             collection_save_folder = top_collection_settings.get('collection_save_folder')
             save_folder = collection_save_folder
             file_name = 'collection-top10.yml'
-            name = 'top-10-collection'
+            name = 'Top 10 Collection'
 
             write_yaml_file(config_directory, save_folder, name, file_name, top_collection_string)
 
         else:
-            logger.info(f"{indentlog2}'top_10_collection' set to false. 'top_10 collection' not created")
+            logger.info(f"{indentlog2}'top_10_collection' set to false. 'top_10_collection' not created")
             logger.info("")
             
     except Exception as e:
-        logger.error(f"An error occurred while creating 'top_10 collection' file: {e}")
+        logger.error(f"An error occurred while creating 'Top 10 Collection' file: {e}")

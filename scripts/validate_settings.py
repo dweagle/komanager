@@ -30,7 +30,7 @@ def validate_settings(config_directory):
             logger.error(f"{indentlog}Settings file format is invalid. Expected a dictionary.")
             return False
 
-        required_sections = ['libraries', 'overlay_settings', 'use_overlays', 'returning_soon_collection', 'movie_new_release', 'in_history_collection', 'top_10']
+        required_sections = ['libraries', 'status_overlay', 'returning_soon_collection', 'movie_new_release', 'in_history_collection', 'top_10']
         for section in required_sections:
             if section not in settings or not isinstance(settings[section], dict) or not settings[section]:
                 logger.error(f"{indentlog}The settings file does not contain a valid '{section}' section or it is empty.")
@@ -38,9 +38,7 @@ def validate_settings(config_directory):
 
         if not validate_libraries(settings['libraries']):
             return False
-        if not validate_overlay_settings(settings['overlay_settings'], config_directory):
-            return False
-        if not validate_use_overlays(settings['use_overlays']):
+        if not validate_status_overlay(settings['status_overlay'], config_directory):
             return False
         if not validate_movie_new_release(settings['movie_new_release'], config_directory):
             return False
@@ -64,51 +62,58 @@ def validate_libraries(libraries):
         if not library_settings:
             logger.error(f"{indentlog2}{library_name}: No settings found for library: {library_name}")
             return False
-
+        validate_choice_setting(library_settings, 'library_type', ['show', 'movie'], 'movie')
         validate_boolean_setting(library_settings, 'is_anime', False)
         validate_boolean_setting(library_settings, 'use_watch_region', True)
 
     return True
 
-
-def validate_overlay_settings(overlay_settings, config_directory):
+def validate_status_overlay(status_overlay, config_directory):
     logger.info("")
-    logger.info(f"{indentlog}overlay_settings:")
-    validate_integer_setting(overlay_settings, 'days_ahead', 30, 1, 30)
-    validate_path_setting(overlay_settings, 'overlay_save_folder', config_directory, True)
-    validate_choice_setting(overlay_settings, 'date_delimiter', ['/', '.', '-', '_'], '/')
-    validate_boolean_setting(overlay_settings, 'remove_leading_zero', False)
-    validate_path_setting(overlay_settings, 'font', f"{config_directory}/fonts/Inter-Medium.ttf", True)
-    validate_integer_setting(overlay_settings, 'font_size', 45, 1, None)
-    validate_color_setting(overlay_settings, 'font_color', '#FFFFFF')
-    validate_choice_setting(overlay_settings, 'horizontal_align', ['center', 'left', 'right'], 'center')
-    validate_choice_setting(overlay_settings, 'vertical_align', ['top', 'center', 'bottom'], 'top')
-    validate_integer_setting(overlay_settings, 'horizontal_offset', 0, 0, None)
-    validate_integer_setting(overlay_settings, 'vertical_offset', 38, 0, None)
-    validate_integer_setting(overlay_settings, 'back_width', 475, 0, None)
-    validate_integer_setting(overlay_settings, 'back_height', 55, 0, None)
-    validate_integer_setting(overlay_settings, 'back_radius', 30, 0, None)
-    validate_choice_setting(overlay_settings, 'ignore_blank_results', ['true', 'false', True, False], 'true')
-    validate_integer_setting(overlay_settings, 'with_status', 0, 0, 5)
-    validate_string_length_setting(overlay_settings, 'watch_region', 2, 'US')
-    validate_string_length_setting(overlay_settings, 'with_original_language', 2, 'en')
-    validate_monetization_types(overlay_settings, 'with_watch_monetization_types', 'flatrate|free|ads|rent|buy')
+    logger.info(f"{indentlog}status_overlay_settings:")
 
-    return True
+    if 'overlay_settings' in status_overlay:
+        overlay_settings = status_overlay['overlay_settings']
+        logger.info(f"{indentlog2}overlay_settings:")
+        validate_integer_setting(overlay_settings, 'days_ahead', 30, 1, 30)
+        validate_path_setting(overlay_settings, 'overlay_save_folder', config_directory, True)
+        validate_choice_setting(overlay_settings, 'date_delimiter', ['/', '.', '-', '_'], '/')
+        validate_boolean_setting(overlay_settings, 'remove_leading_zero', False)
+        validate_path_setting(overlay_settings, 'font', f"{config_directory}/fonts/Inter-Medium.ttf", True)
+        validate_integer_setting(overlay_settings, 'font_size', 45, 1, None)
+        validate_color_setting(overlay_settings, 'font_color', '#FFFFFF')
+        validate_choice_setting(overlay_settings, 'horizontal_align', ['center', 'left', 'right'], 'center')
+        validate_choice_setting(overlay_settings, 'vertical_align', ['top', 'center', 'bottom'], 'top')
+        validate_integer_setting(overlay_settings, 'horizontal_offset', 0, 0, None)
+        validate_integer_setting(overlay_settings, 'vertical_offset', 38, 0, None)
+        validate_integer_setting(overlay_settings, 'back_width', 475, 0, None)
+        validate_integer_setting(overlay_settings, 'back_height', 55, 0, None)
+        validate_integer_setting(overlay_settings, 'back_radius', 30, 0, None)
+        validate_choice_setting(overlay_settings, 'ignore_blank_results', ['true', 'false', True, False], 'true')
+        validate_integer_setting(overlay_settings, 'with_status', 0, 0, 5)
+        validate_string_length_setting(overlay_settings, 'watch_region', 2, 'US')
+        validate_string_length_setting(overlay_settings, 'with_original_language', 2, 'en')
+        validate_monetization_types(overlay_settings, 'with_watch_monetization_types', 'flatrate|free|ads|rent|buy')
+    else:
+        logger.error(f"{indentlog2}Missing 'overlay_settings' section in 'status_overlay_settings'.")
+        return False
 
-def validate_use_overlays(use_overlays):
-    logger.info("")
-    logger.info(f"{indentlog}use_overlays:")
-    for overlay_name, optional_settings in use_overlays.items():
-        logger.info(f"{indentlog2}{overlay_name}:")
-        if not optional_settings:
-            logger.error(f"{indentlog2}No settings found for overlay: {overlay_name}")
-            return False
+    if 'use_overlays' in status_overlay:
+        use_overlays = status_overlay['use_overlays']
+        logger.info(f"{indentlog2}use_overlays:")
+        for overlay_name, optional_settings in use_overlays.items():
+            logger.info(f"{indentlog3}{overlay_name}:")
+            if not optional_settings:
+                logger.error(f"{indentlog3}No settings found for overlay: {overlay_name}")
+                return False
 
-        validate_boolean_setting(optional_settings, 'use', True)
-        validate_color_setting(optional_settings, 'back_color', '#FFFFFF')
-        validate_string_setting(optional_settings, 'text', 'default_text')
-        validate_color_setting(optional_settings, 'font_color', '#FFFFFF')
+            validate_boolean_setting(optional_settings, 'use', True)
+            validate_color_setting(optional_settings, 'back_color', '#FFFFFF')
+            validate_string_setting(optional_settings, 'text', 'default_text')
+            validate_color_setting(optional_settings, 'font_color', '#FFFFFF')
+    else:
+        logger.error(f"{indentlog2}Missing 'use_overlays' section in 'status_overlay_settings'.")
+        return False
 
     return True
 

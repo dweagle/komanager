@@ -4,7 +4,7 @@ from logging.handlers import RotatingFileHandler
 
 def log_setup(config_directory):
     log_directory = os.path.join(config_directory, "logs")
-    log_path = os.path.join(log_directory, "status.log")
+    log_path = os.path.join(log_directory, "manager.log")
     need_roll = os.path.isfile(log_path)
 
     directory_existed = os.path.exists(log_directory)

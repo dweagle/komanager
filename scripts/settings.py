@@ -21,102 +21,112 @@ settings_filename = "settings.yml"
 settings = CommentedMap({
     "libraries": CommentedMap({
         "TV Shows": CommentedMap({
+            "library_type": "show",
             "is_anime": False,
             "use_watch_region": True
         }),
         "4k TV Shows": CommentedMap({
+            "library_type": "show",
             "is_anime": False,
             "use_watch_region": True
         }),
         "Anime": CommentedMap({
+            "library_type": "show",
             "is_anime": True,
+            "use_watch_region": True
+        }),
+        "Movies": CommentedMap({
+            "library_type": "movie",
+            "is_anime": False,
             "use_watch_region": True
         })
     }),
 
-    "overlay_settings": CommentedMap({
-        "days_ahead": 30,
-        "overlay_save_folder": "path/to/folder",
-        "date_delimiter": DoubleQuotedScalarString("/"),
-        "remove_leading_zero": False,
-        "font": "path/to/kometa-font",
-        "font_size": 45,
-        "font_color": DoubleQuotedScalarString("#FFFFFF"),
-        "horizontal_align": "center",
-        "vertical_align": "top",
-        "horizontal_offset": 0,
-        "vertical_offset": 38,
-        "back_width": 475,
-        "back_height": 55,
-        "back_radius": 30,
-        "ignore_blank_results": "true",
-        "with_status": 0,
-        "watch_region": "US",
-        "with_original_language": "en",
-        "limit": 500,
-        "with_watch_monetization_types": "flatrate|free|ads|rent|buy"
-    }),
+    "status_overlay": CommentedMap({
+        "overlay_settings": CommentedMap({
+            "days_ahead": 30,
+            "overlay_save_folder": "path/to/folder",
+            "date_delimiter": DoubleQuotedScalarString("/"),
+            "remove_leading_zero": False,
+            "font": "path/to/kometa-font",
+            "font_size": 45,
+            "font_color": DoubleQuotedScalarString("#FFFFFF"),
+            "horizontal_align": "center",
+            "vertical_align": "top",
+            "horizontal_offset": 0,
+            "vertical_offset": 38,
+            "back_width": 475,
+            "back_height": 55,
+            "back_radius": 30,
+            "ignore_blank_results": "true",
+            "with_status": 0,
+            "watch_region": "US",
+            "with_original_language": "en",
+            "limit": 500,
+            "with_watch_monetization_types": "flatrate|free|ads|rent|buy"
+        }),
 
-    "use_overlays": CommentedMap({
-        "upcoming_series": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#FC4E03"),
-            "text": DoubleQuotedScalarString("U P C O M I N G"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "new_series": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#008001"),
-            "text": DoubleQuotedScalarString("N E W  S E R I E S"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "new_airing_next": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#008001"),
-            "text": DoubleQuotedScalarString("N E W - A I R S "),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "airing_series": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#003880"),
-            "text": DoubleQuotedScalarString("A I R I N G"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "airing_today": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#003880"),
-            "text": DoubleQuotedScalarString("A I R S  T O D A Y"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "airing_next": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#003880"),
-            "text": DoubleQuotedScalarString("A I R I N G "),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "ended_series": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#000000"),
-            "text": DoubleQuotedScalarString("E N D E D"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "canceled_series": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#CF142B"),
-            "text": DoubleQuotedScalarString("C A N C E L E D"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "returning_series": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#103197"),
-            "text": DoubleQuotedScalarString("R E T U R N I N G"),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
-        }),
-        "returns_next": CommentedMap({
-            "use": True,
-            "back_color": DoubleQuotedScalarString("#103197"),
-            "text": DoubleQuotedScalarString("R E T U R N S "),
-            "font_color": DoubleQuotedScalarString("#FFFFFF")
+        "use_overlays": CommentedMap({
+            "upcoming_series": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#FC4E03"),
+                "text": DoubleQuotedScalarString("U P C O M I N G"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "new_series": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#008001"),
+                "text": DoubleQuotedScalarString("N E W  S E R I E S"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "new_airing_next": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#008001"),
+                "text": DoubleQuotedScalarString("N E W - A I R S "),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "airing_series": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#003880"),
+                "text": DoubleQuotedScalarString("A I R I N G"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "airing_today": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#003880"),
+                "text": DoubleQuotedScalarString("A I R S  T O D A Y"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "airing_next": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#003880"),
+                "text": DoubleQuotedScalarString("A I R I N G "),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "ended_series": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#000000"),
+                "text": DoubleQuotedScalarString("E N D E D"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "canceled_series": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#CF142B"),
+                "text": DoubleQuotedScalarString("C A N C E L E D"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "returning_series": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#103197"),
+                "text": DoubleQuotedScalarString("R E T U R N I N G"),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            }),
+            "returns_next": CommentedMap({
+                "use": True,
+                "back_color": DoubleQuotedScalarString("#103197"),
+                "text": DoubleQuotedScalarString("R E T U R N S "),
+                "font_color": DoubleQuotedScalarString("#FFFFFF")
+            })
         })
     }),
 
@@ -193,22 +203,24 @@ settings = CommentedMap({
 })
 
 def add_comments(settings):
+    # End of line comment spacing
     max_key_length = max(len(key) for key in settings.keys())
 
     # Schema comment
     settings.yaml_set_comment_before_after_key("libraries", before=" yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/komanager/main/json_schema/settings.json\n\n")
 
     # Section comments and spacing
-    settings.yaml_set_comment_before_after_key("libraries", before="Status Overlay Settings")
-    settings.yaml_set_comment_before_after_key("overlay_settings", before="\n\n")
-    settings.yaml_set_comment_before_after_key("use_overlays", before="\n\n")
-    settings.yaml_set_comment_before_after_key("movie_new_release", before="\nNew Movie Release Settings - Uses 'status overlay' settings.")
+    settings.yaml_set_comment_before_after_key("libraries", before="Plex libraries to create overlays for. Library type is 'show' or 'movie'.")
+    settings.yaml_set_comment_before_after_key("status_overlay", before="\nSettings for Show Status Overlay and movie New Release overlay.")
+    settings["status_overlay"].yaml_set_comment_before_after_key("overlay_settings", before="  Adjust overlay position, size, font, TMDB settings, save location, etc.")
+    settings["status_overlay"].yaml_set_comment_before_after_key("use_overlays", before="  Turn overlays off/on, adjust font color, back color, and text")
+    settings.yaml_set_comment_before_after_key("movie_new_release", before="\nNew Movie Release Settings - Uses 'status_overlay: overlay_settings'.")
     settings.yaml_set_comment_before_after_key("returning_soon_collection", before="\nReturning Soon Collection Settings")
     settings.yaml_set_comment_before_after_key("in_history_collection", before="\nIn History Collection Settings")
     settings.yaml_set_comment_before_after_key("top_10", before="\nTop 10 Overlay and Collection Settings")
 
     # End of line comments
-    settings.yaml_add_eol_comment("# Plex library (SHOWS ONLY) names to create Kometa overlays for.", "libraries", column=max_key_length + 5)
+    settings.yaml_add_eol_comment("Kometa must have permissions for save, font, and poster paths.", "overlay_save_folder", column=max_key_length + 5)
 
 def create_settings_file(main_directory, run_now, run_now_env, in_docker):
     settings_file_path = os.path.join(main_directory, settings_filename)
@@ -222,14 +234,14 @@ def create_settings_file(main_directory, run_now, run_now_env, in_docker):
         logger.info(f"Created settings file at '{settings_file_path}'")
         
         if in_docker and not (run_now or run_now_env):
-            logger.info("Please edit the 'overlay-settings.yml' to your liking. Overlays will be created at scheduled run.")
-            logger.info("If you would like to create overlays now, set RUN_NOW to True in your compose file and restart the container or complete a manual run.")
+            logger.info("Please edit the 'settings.yml' to your liking. Overlays will be created at scheduled run.")
+            logger.info("If you would like to create overlays/collections now, set RUN_NOW to True in your compose file and restart the container or complete a manual run.")
 
         if in_docker and (run_now or run_now_env):
-            logger.info("Please edit the 'overlay-settings.yml' to your liking. Restart the container to create overlays now.")
+            logger.info("Please edit the 'settings.yml' to your liking. Restart the container to create overlays/collections now.")
 
         if not in_docker:
-            logger.info("Please edit the 'overlay-settings.yml' to your liking. Run the script again to create overlays.")
+            logger.info("Please edit the 'settings.yml' to your liking. Run the script again to create overlays/collections now.")
                     
     except Exception as e:
         logger.error(f"Error creating settings file: {e}")
@@ -245,19 +257,30 @@ def load_settings(main_directory, log_message=True):
         with open(settings_file_path, 'r') as file:
             if log_message:
                 logger.info(f"Loading settings from '{settings_file_path}'")
-            return yaml.load(file)
+            loaded_settings = yaml.load(file)
+            return loaded_settings if loaded_settings is not None else CommentedMap()
 
     except Exception as e:
         logger.error(f"Error loading settings file: {e}")
         raise
 
+def strip_comments(node):
+    if isinstance(node, CommentedMap):
+        node.ca.items.clear()
+        for value in node.values():
+            strip_comments(value)
+            
 def update_dict(existing, defaults):
     updated = CommentedMap()
 
     for key, value in defaults.items():
         if key == "libraries":
             if key in existing:
-                updated[key] = existing[key]
+                libraries_without_comments = existing[key]
+                strip_comments(libraries_without_comments)
+                updated[key] = libraries_without_comments
+            else:
+                updated[key] = value
             continue
         if key in existing:
             if isinstance(value, dict):
@@ -282,17 +305,10 @@ def update_settings_file(main_directory):
 
         updated_settings = update_dict(existing_settings, settings)
         settings_changed = existing_settings != updated_settings
-
+        strip_comments(updated_settings)
+        add_comments(updated_settings)
         with open(settings_file_path, 'w') as file:
             yaml.dump(updated_settings, file)
-
-        with open(settings_file_path, 'r') as file:
-            updated_settings_with_comments = yaml.load(file)
-
-        add_comments(updated_settings_with_comments)
-
-        with open(settings_file_path, 'w') as file:
-            yaml.dump(updated_settings_with_comments, file)
 
         if settings_changed:
             logger.info(f"Updated settings file at '{settings_file_path}' with missing sections and comments")
