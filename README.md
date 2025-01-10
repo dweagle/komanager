@@ -50,10 +50,10 @@ Kometa can use the TMDB Discover API to grab series info to find air dates, etc.
 in this file limits the "junk" show results that are pulled for a library with mainly US, English language shows.  
 You will get fewer "No TVDB/TMDB id" errors in Kometa when it parses this info.
 
-If you have an anime library or a TV show library with lots of non-English shows, it may be best
+If you have an anime library or a TV show or movie library with lots of non-English shows, it may be best
 to NOT use watch_region or with_original_language settings.
 
-libraries:                   # Plex library (SHOWS ONLY) names to create Kometa overlays for.
+libraries:                   # Plex library names to create Kometa overlays and collections for.
   TV Shows:                  # Change, add, or remove - Need at least one library.
     library_type: show       # Library type can be set to as 'show' or 'movie'.
     is_anime: False          # True removes TMDB with_original_language:'en' setting for use with Anime libraries or libraries with non-English shows.         
@@ -159,6 +159,15 @@ status_overlay:
       text: "R E T U R N S "      # Displays as R E T U R N S  12/23 on overlays.
       font_color: "#FFFFFF"     
 
+# Creates an overlay YAML that will add a "N E W  R E L E A S E" status overlay on movies considered to be new release.
+movie_new_release:              #USES status_overlay settinsgs for overlay positioning and colors"
+  use: true                     # True to create collection YAML. False to not create.
+  new_movie_save_folder: /path/to/folder        # Path to overlay YAML folder (leave blank for /config folder) Kometa must have permissions to this folder.
+  days_to_consider_new: 90      # Min 1, Max 90.
+  back_color: "#008001"
+  text: "N E W  R E L E A S E"  # Change to desired spacing/text.
+  font_color: "#FFFFFF"         # Font color override for this overlay only (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA).
+
 # Creates a Returning Soon collection YAML file that can be used in Kometa to display a collection in Plex.
 returning_soon_collection:
   use: True                     # True to create collection YAML. False to not create.
@@ -179,27 +188,44 @@ returning_soon_collection:
 in_history_collection:
   use: true                     # True to create collection YAML. False to not create.
   in_history_save_folder: path/to/folder      # Path to collection YAML folder (leave blank for /config folder). Kometa must have permissions to this folder.
-  in_history_range: weeks      # days, weeks, or months - Default is weeks.  Creates a collection of library items that released on this day, week, or month in history.
-  starting_year: 1980          # Release year to start collection
-  ending_year: 2024            # Release year to end collection
+  in_history_range: weeks       # days, weeks, or months - Default is weeks.  Creates a collection of library items that released on this day, week, or month in history.
+  starting_year: 1980           # Release year to start collection
+  ending_year: 2024             # Release year to end collection
   use_poster: false             # False removes the poster source/path from the collection YAML.  Set to true if you want to use a specific poster.  Set to false if Kometa uses assets folder for posters.
   poster_source: url            # url or file. url for outside source, file for local poster. Defaults to url and Kometa GitHub poster.  
   poster_path: /path/to/kometa-poster     # Path placed in final YAML for Kometa to use. Kometa must have permissions for this folder. Can be a URL link or file path. Defaults to url Kometa poster included in config.
-  visible_home: "false"          # Collection visible on home page. "true" or "false".
-  visible_shared: "false"        # Collection visible on friends/users home page. "true" or "false".
+  visible_home: "false"         # Collection visible on home page. "true" or "false".
+  visible_shared: "false"       # Collection visible on friends/users home page. "true" or "false".
   visible_library: 'true'       # Collection visible on library recommendations page. "true" or "false"
   minimum_items: 1              # Minimum items in collection before being considered for deletion.
   delete_below_minimum: 'true'  # Will delete collection in Plex if it goes below minimum items.
-  sort_title: "!012_In_History"  # Sort order title of collection in Plex.
+  sort_title: "!012_In_History" # Sort order title of collection in Plex.
 
-# Creates an overlay YAML that will add a "N E W  R E L E A S E" status overlay on movies considered to be new release.
-movie_new_release:
-  use: true                     # True to create collection YAML. False to not create.
-  new_movie_save_folder: /path/to/folder        # Path to overlay YAML folder (leave blank for /config folder) Kometa must have permissions to this folder.
-  days_to_consider_new: 90      # Min 1, Max 90.
-  back_color: "#008001"
-  text: "N E W  R E L E A S E"  # Change to desired spacing/text.
-  font_color: "#FFFFFF"         # Font color override for this overlay only (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA).
+# Top 10 Overlay and Collection Settings
+top_10:
+  top_10_overlay:
+    use: true
+    overlay_save_folder: /path/to/folder
+    vertical_align: top
+    horizontal_align: left
+    vertical_offset: 105
+    horizontal_offset: 30
+    font: /path/to/kometa-font
+    font_size: 45
+    font_color: "#80FF40"
+    back_width: 215
+    back_height: 70
+    back_radius: 10
+    back_color: "#000000B3"
+  top_10_collection:
+    use: true
+    collection_save_folder: /path/to/folder
+    visible_home: 'false'
+    visible_library: 'true'
+    visible_shared: 'false'
+    minimum_items: 1
+    delete_below_minimum: 'true'
+    sort_title_prefix: "!020"    # Prefix for collection names. Will preced default TOP 10 sort_title.  
 ```
 
 # Docker Setup
