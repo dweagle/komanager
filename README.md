@@ -5,8 +5,8 @@
 <div align="center">KoManager will update dates daily to keep overlays fresh.</div><br>
 <div align="center">- 'Returning Soon' collection to display shows that will return to airing.</div><br>
 <div align="center">- 'In History' collection to display items released in your library from this day/week/month in history.</div><br>
-<div align="center">- 'NEW RELEASE' status overlay for movie posters .</div><br>
-<br>
+<div align="center">- 'NEW RELEASE' status overlay for movie posters.</div><br>
+<div align="center">- 'Top 10 overlay and collection for major streaming services using <a href="https://github.com/Navino16/flixpatrol-top10-on-trakt">Navion16 Flixpatrol Top 10</a>Trakt list.</div><br>
 <div align="center">Inspired by <a href="https://github.com/InsertDisc/pattrmm">pattrmm</a> by InsertDisc</div>
 <br>
 <div align="center"> Example Statuses</div>
@@ -55,102 +55,109 @@ to NOT use watch_region or with_original_language settings.
 
 libraries:                   # Plex library (SHOWS ONLY) names to create Kometa overlays for.
   TV Shows:                  # Change, add, or remove - Need at least one library.
+    library_type: show       # Library type can be set to as 'show' or 'movie'.
     is_anime: False          # True removes TMDB with_original_language:'en' setting for use with Anime libraries or libraries with non-English shows.         
     use_watch_region: True   # False removes TMDB watch_region and watch_monetization settings.
   4k TV Shows:
+    library_type: show
     is_anime: False
     use_watch_region: True
   Anime:
+    library_type: show
     is_anime: True
     use_watch_region: True
-
+  Movies:
+    library_type: movie
+    is_anime: True
+    use_watch_region: True
 # These settings are used across all status overlays.  
-# This creates a consistent overlay across all shows.    
-overlay_settings:                  
-  days_ahead: 30                # Days ahead for Returning Next (30 Days Max).
-  date_delimiter: "/"           # Change date delimiter that displays on overlay - Default "/" - must be "/", ".", "-", or "_".
-  remove_leading_zero: False    # True removes the leading zero from MM/DD for overlays.  Ex. 01/02 becomes 1/2.
-  overlay_save_folder: /path/to/folder     # Kometa overlay folders (leave blank for config folder). Kometa must have permissions to this folder.
-  font: /path/to/kometa-font    # Path placed in final YAML for Kometa to use. Kometa must have permissions for this folder. Will default to included font in 'config/fonts/Inter-Medium.ttf'.
-  font_size: 45                 # Font size for overlay text.
-  font_color: "#FFFFFF"         # Font color (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA, e.g., #FFFFFF).
-  horizontal_align: center      # Horizontal alignment (e.g., center, left, right).
-  vertical_align: top           # Vertical alignment (e.g., top, bottom, etc.).
-  horizontal_offset: 0          # Horizontal offset in pixels.
-  vertical_offset: 38           # Vertical offset in pixels.
-  back_width: 475               # Width of the overlay background.
-  back_height: 55               # Height of the overlay background.
-  back_radius: 30               # Corner radius for rounded backgrounds.
-  ignore_blank_results: "true"  # Kometa error processing (true or false).
+# This creates a consistent overlay across all shows.   
+status_overlay:
+  overlay_settings:                  
+    days_ahead: 30                # Days ahead for Returning Next (30 Days Max).
+    date_delimiter: "/"           # Change date delimiter that displays on overlay - Default "/" - must be "/", ".", "-", or "_".
+    remove_leading_zero: False    # True removes the leading zero from MM/DD for overlays.  Ex. 01/02 becomes 1/2.
+    overlay_save_folder: /path/to/folder     # Kometa overlay folders (leave blank for config folder). Kometa must have permissions to this folder.
+    font: /path/to/kometa-font    # Path placed in final YAML for Kometa to use. Kometa must have permissions for this folder. Will default to included font in 'config/fonts/Inter-Medium.ttf'.
+    font_size: 45                 # Font size for overlay text.
+    font_color: "#FFFFFF"         # Font color (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA, e.g., #FFFFFF).
+    horizontal_align: center      # Horizontal alignment (e.g., center, left, right).
+    vertical_align: top           # Vertical alignment (e.g., top, bottom, etc.).
+    horizontal_offset: 0          # Horizontal offset in pixels.
+    vertical_offset: 38           # Vertical offset in pixels.
+    back_width: 475               # Width of the overlay background.
+    back_height: 55               # Height of the overlay background.
+    back_radius: 30               # Corner radius for rounded backgrounds.
+    ignore_blank_results: "true"  # Kometa error processing (true or false).
 
-  # TMDB DISCOVER SETTINGS #    SEE TMDB API FOR MORE DETAILS - THESE DEFAULT SETTINGS ARE IDEAL.
-  with_status: 0                # TMDB DISCOVER - Returning Series: 0 Planned: 1 In Production: 2 Ended: 3 Canceled: 4 Pilot: 5.
-  watch_region: US              # TMDB DISCOVER - Default US - Must be a valid TMDB region code.
-  with_original_language: en    # TMDB DISCOVER - Default is en (English) - Must be a valid TMDB language code.
-  limit: 500                    # TMDB DISCOVER - API Results limit. Default is 500.
-  with_watch_monetization_types: flatrate|free|ads|rent|buy  # TMDB DISCOVER - Options: flatrate, free, ads, rent, buy - can use ,(and) or |(or) as separators.
+    # TMDB DISCOVER SETTINGS #    SEE TMDB API FOR MORE DETAILS - THESE DEFAULT SETTINGS ARE IDEAL.
+    with_status: 0                # TMDB DISCOVER - Returning Series: 0 Planned: 1 In Production: 2 Ended: 3 Canceled: 4 Pilot: 5.
+    watch_region: US              # TMDB DISCOVER - Default US - Must be a valid TMDB region code.
+    with_original_language: en    # TMDB DISCOVER - Default is en (English) - Must be a valid TMDB language code.
+    limit: 500                    # TMDB DISCOVER - API Results limit. Default is 500.
+    with_watch_monetization_types: flatrate|free|ads|rent|buy  # TMDB DISCOVER - Options: flatrate, free, ads, rent, buy - can use ,(and) or |(or) as separators.
 
-# You can decide here if you want to use each overlay, change the font or backdrop color for individual overlays, or change the text.
-use_overlays:
-  upcoming_series:
-    use: True                   # Use this overlay: True or False.
-    back_color: "#FC4E03"       # Default is "#fc4e03" - Overlay color override for this overlay only.
-    text: "U P C O M I N G"     # Change to desired spacing/text.
-    font_color: "#FFFFFF"       # Font color override for this overlay only (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA).
-    
-  new_series:
-    use: True
-    back_color: "#008001"       # Default is "#008001".
-    text: "N E W  S E R I E S"
-    font_color: "#FFFFFF"
+  # You can decide here if you want to use each overlay, change the font or backdrop color for individual overlays, or change the text.
+  use_overlays:
+    upcoming_series:
+      use: True                   # Use this overlay: True or False.
+      back_color: "#FC4E03"       # Default is "#fc4e03" - Overlay color override for this overlay only.
+      text: "U P C O M I N G"     # Change to desired spacing/text.
+      font_color: "#FFFFFF"       # Font color override for this overlay only (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA).
+      
+    new_series:
+      use: True
+      back_color: "#008001"       # Default is "#008001".
+      text: "N E W  S E R I E S"
+      font_color: "#FFFFFF"
 
-  new_airing_next:
-    use: True
-    back_color: "#008001"       # Default is "#008001".
-    text: "N E W - A I R S"     # Displays as N E W - A I R S 12/22 on overlays.
-    font_color: "#FFFFFF"
+    new_airing_next:
+      use: True
+      back_color: "#008001"       # Default is "#008001".
+      text: "N E W - A I R S"     # Displays as N E W - A I R S 12/22 on overlays.
+      font_color: "#FFFFFF"
 
-  airing_series:
-    use: True
-    back_color: "#003880"       # Default is "#003880".
-    text: "A I R I N G"
-    font_color: "#FFFFFF"
+    airing_series:
+      use: True
+      back_color: "#003880"       # Default is "#003880".
+      text: "A I R I N G"
+      font_color: "#FFFFFF"
 
-  airing_today:
-    use: True
-    back_color: "#003880"       # Default is "#003880".
-    text: "A I R S  T O D A Y"
-    font_color: "#FFFFFF"
+    airing_today:
+      use: True
+      back_color: "#003880"       # Default is "#003880".
+      text: "A I R S  T O D A Y"
+      font_color: "#FFFFFF"
 
-  airing_next:
-    use: True
-    back_color: "#003880"       # Default is "#003880".
-    text: "A I R I N G "        # Displays as A I R I N G  12/23 on overlays.
-    font_color: "#FFFFFF"
+    airing_next:
+      use: True
+      back_color: "#003880"       # Default is "#003880".
+      text: "A I R I N G "        # Displays as A I R I N G  12/23 on overlays.
+      font_color: "#FFFFFF"
 
-  ended_series:
-    use: True
-    back_color: "#000000"       # Default is "#000000".
-    text: "E N D E D"
-    font_color: "#FFFFFF"
+    ended_series:
+      use: True
+      back_color: "#000000"       # Default is "#000000".
+      text: "E N D E D"
+      font_color: "#FFFFFF"
 
-  canceled_series:
-    use: True
-    back_color: "#CF142B"       # Default is "#CF142B".
-    text: "C A N C E L E D"
-    font_color: "#FFFFFF"
+    canceled_series:
+      use: True
+      back_color: "#CF142B"       # Default is "#CF142B".
+      text: "C A N C E L E D"
+      font_color: "#FFFFFF"
 
-  returning_series:
-    use: True
-    back_color: "#103197"       # Default is "#103197".
-    text: "R E T U R N I N G"
-    font_color: "#FFFFFF" 
+    returning_series:
+      use: True
+      back_color: "#103197"       # Default is "#103197".
+      text: "R E T U R N I N G"
+      font_color: "#FFFFFF" 
 
-  returns_next:
-    use: True
-    back_color: "#103197"       # Default is "#103197".
-    text: "R E T U R N S "      # Displays as R E T U R N S  12/23 on overlays.
-    font_color: "#FFFFFF"     
+    returns_next:
+      use: True
+      back_color: "#103197"       # Default is "#103197".
+      text: "R E T U R N S "      # Displays as R E T U R N S  12/23 on overlays.
+      font_color: "#FFFFFF"     
 
 # Creates a Returning Soon collection YAML file that can be used in Kometa to display a collection in Plex.
 returning_soon_collection:
