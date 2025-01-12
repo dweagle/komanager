@@ -1137,8 +1137,8 @@ templates:
 
             if use_vote_count:
                 logger.info(f"{indentlog2}'use_vote_count' set to 'true'")
-                logger.info(f"{indentlog3}Adding 'vote_count: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}'.")
-                streaming_string += f"{indent3}vote_count: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}\n"
+                logger.info(f"{indentlog3}Adding 'vote_count.gte: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}'.")
+                streaming_string += f"{indent3}vote_count.gte: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}\n"
 
             streaming_string += f"{indent3}sort_by: popularity.desc\n"
 
