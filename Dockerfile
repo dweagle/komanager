@@ -26,6 +26,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # Copy fonts and application source code
+COPY ./streaming-images /streaming-images
 COPY ./fonts /fonts
 COPY ./posters /posters
 COPY ./scripts /app/scripts
@@ -45,6 +46,7 @@ WORKDIR /app
 
 # Copy only the necessary files from the builder stage
 COPY --from=builder /install /usr/local
+COPY ./streaming-images /streaming-images
 COPY ./posters /posters
 COPY ./fonts /fonts
 COPY ./scripts /app/scripts

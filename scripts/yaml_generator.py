@@ -87,6 +87,24 @@ DEFAULTS = {
     'new_movie_back_color': '#103197',
     'new_movie_text': 'N E W  R E L E A S E',
 
+    'streaming_overlay_use': True,
+    'streaming_image_folder': "{config_directory}/streaming-images",
+    'streaming_vertical_align': 'top',
+    'streaming_horizontal_align': 'left',
+    'streaming_vertical_offset': 30,
+    'streaming_horizontal_offset': 30,
+    'streaming_back_width': 215,
+    'streaming_back_height': 70,
+    'streaming_back_radius': 10,
+    'streaming_back_color': '#000000B3',
+    'streaming_ignore_blank_results': "true",
+    'streaming_watch_region': 'US',
+    'streaming_with_original_languge': 'en',
+    'streaming_with_watch_monetization_types': 'flatrate|free|ads|rent|buy',
+    'use_vote_count': True,
+    'vote_count': 2,
+    'use_extra_streaming': True,
+
     'top_overlay_use': True,
     'top_vertical_align': 'top',
     'top_horizontal_align': 'left',
@@ -123,7 +141,7 @@ def get_with_defaults(settings, primary_key, fallback_key=None, config_directory
     if primary_key == 'font_color' and not is_valid_color(value):
         value = DEFAULTS.get('font_color', '#FFFFFF')
 
-    if value in ["path/to/kometa-poster", "path/to/kometa-font"]:
+    if value in ["path/to/kometa-poster", "path/to/kometa-font", "path/to/images"]:
         value = DEFAULTS.get(primary_key)
 
     if isinstance(value, str) and "{config_directory}" in value:
@@ -173,7 +191,7 @@ indent2 = "    "  # indent 2 tabs (4 spaces) for kometa yaml spacing
 indent3 = "      " # indent 3 tabs (6 spaces) for kometa yaml spacing
 indent4 = "        " # indent 4 tabs (8 spaces) for kometa yaml spacing
 
-def create_library_yaml(config_directory):
+def create_status_yaml(config_directory):
     try:
         settings = load_settings(config_directory, log_message=False)
 
@@ -213,7 +231,7 @@ def create_library_yaml(config_directory):
                 continue
             is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
             use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
-            logger.info(f"{indentlog}Creating main template yaml for {library_name}.")
+            logger.info(f"{indentlog}Creating main status template YAML for {library_name}.")
 
             status_string = f"""# {library_name} Template
 templates:
@@ -1044,3 +1062,148 @@ collections:
             
     except Exception as e:
         logger.error(f"An error occurred while creating 'Top 10 Collection' file: {e}")
+
+############################
+# Create Streaming Overlay #
+############################
+
+def create_streaming_yaml(config_directory):
+    try:
+        settings = load_settings(config_directory, log_message=False)
+
+        libraries = settings.get('libraries', {})
+
+        streaming_settings = settings.get('streaming_overlay', {})
+        use_extra_streaming = streaming_settings.get('use_extra_streaming', False)
+        default_streaming_services = streaming_settings.get('streaming_services', {}).get('default_streaming', {})
+        extra_streaming_services = streaming_settings.get('streaming_services', {}).get('extra_streaming', {})
+
+        tmdb_keys = {
+            'Netflix': '8', 'AppleTV': '350', 'Disney': '337', 'Max': '1899', 'Prime': '9',
+            'Crunchyroll': '283|1968', 'YouTube': '188', 'Hulu': '15', 'Paramount': '531|1770|1853',
+            'Peacock': '386', 'Crave': '230', 'Discovery+': '510', 'NOW': '39', 'All 4': '103',
+            'BritBox': '151', 'BET+': '1759', 'AMC+': '526|1854|528|635', 'Freevee': '613',
+            'FuboTV': '257', 'FXNOW': '123', 'Hoopla': '212', 'MGM+': '34|636', 'Starz': '43|1855|634|1794',
+            'TBS': '506', 'TNT': '363', 'truTV': '507', 'tubiTV': '73', 'USA': '322'
+}
+        for library_name, library_settings in libraries.items():
+            is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
+            use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
+            use_vote_count = get_with_defaults(streaming_settings, 'use_vote_count', 'use_vote_count')
+            logger.info(f"{indentlog}Creating Streaming template YAML for {library_name}.")
+
+            streaming_string = f"""# {library_name} Streaming Overlay
+templates:
+  streaming:
+    overlay:
+      name: <<overlay_name>>
+      file: "{get_with_defaults(streaming_settings, 'streaming_image_folder', 'streaming_image_folder', config_directory)}/<<key>>.png"
+      group: ICONS
+      weight: <<weight>>
+      horizontal_align: {get_with_defaults(streaming_settings, 'horizontal_align', 'streaming_horizontal_align')}
+      vertical_align: {get_with_defaults(streaming_settings, 'vertical_align', 'streaming_veritcal_align')}
+      horizontal_offset: {get_with_defaults(streaming_settings, 'horizontal_offset', 'streaming_horizontal_offset')}
+      vertical_offset: {get_with_defaults(streaming_settings, 'vertical_offset', 'streaming_vertical_offset')}
+      back_color:  "{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}"
+      back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}
+      back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}
+      back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}
+    ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
+    tmdb_discover:
+      with_watch_providers: <<tmdb_key>>
+"""
+            if use_watch_region:
+                logger.info(f"{indentlog2}'watch_region' set to 'true'")
+                logger.info(f"{indentlog3}Adding 'watch_region: {get_with_defaults(streaming_settings, 'watch_region', 'streaming_watch_region')}'.")
+                logger.info(f"{indentlog3}Adding 'with_watch_monetization_type: {get_with_defaults(streaming_settings, 'with_watch_monetization_types', 'streaming_with_watch_monetization_types')}'.")
+                streaming_string += f"{indent3}watch_region: {get_with_defaults(streaming_settings, 'watch_region', 'streaming_watch_region')}\n"
+                streaming_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(streaming_settings, 'with_watch_monetization_types', 'streaming_with_watch_monetization_types')}\n"
+
+            else:
+                logger.info(f"{indentlog2}'watch_region' set to 'false'")
+                logger.info(f"{indentlog3}Removing 'watch_region'.")
+                logger.info(f"{indentlog3}Removing 'with_watch_monetizaion_types'.")
+            
+            if not is_anime:
+                logger.info(f"{indentlog2}'is_anime' set to 'false'")
+                logger.info(f"{indentlog3}Adding 'with_original_language: {get_with_defaults(streaming_settings, 'with_original_language', 'streaming_with_original_language')}'.")
+                streaming_string += f"{indent3}with_original_language: {get_with_defaults(streaming_settings, 'with_original_language', 'streaming_with_original_language')}\n"
+
+            else:
+                logger.info(f"{indentlog2}'is_anime' set to 'true'")
+                logger.info(f"{indentlog3}Removing 'with_original_language'.")
+
+            streaming_string += f"{indent3}limit: <<limit>>\n"
+
+            if use_vote_count:
+                logger.info(f"{indentlog2}'use_vote_count' set to 'true'")
+                logger.info(f"{indentlog3}Adding 'vote_count: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}'.")
+                streaming_string += f"{indent3}vote_count: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}\n"
+
+            streaming_string += f"{indent3}sort_by: popularity.desc\n"
+
+            logger.info(f"{indentlog}Streaming template created")
+            logger.info(f"{indentlog}Creating streaming overlays")
+
+            streaming_string += "\noverlays:"
+
+            plex_fallback_string = f"""
+
+# Plex Fallback #
+  Plex Fallback Overlay:
+    overlay:
+      name: plex
+      file: "{get_with_defaults(streaming_settings, 'streaming_image_folder', 'streaming_image_folder', config_directory)}/Plex.png"
+      group: ICONS
+      weight: 15
+      horizontal_align: {get_with_defaults(streaming_settings, 'horizontal_align', 'streaming_horizontal_align')}
+      vertical_align: {get_with_defaults(streaming_settings, 'vertical_align', 'streaming_veritcal_align')}
+      horizontal_offset: {get_with_defaults(streaming_settings, 'horizontal_offset', 'streaming_horizontal_offset')}
+      vertical_offset: {get_with_defaults(streaming_settings, 'vertical_offset', 'streaming_vertical_offset')}
+      back_color:  "{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}"
+      back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}
+      back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}
+      back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}
+    ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
+    plex_all: true
+
+# Streaming #
+  # Same as Kometa Default Streaming #
+"""
+            streaming_string += plex_fallback_string
+
+            for service, service_settings in default_streaming_services.items():
+                if service_settings.get('use', True):
+                    limit = service_settings.get('limit', 1500)
+                    weight = service_settings.get('weight', 100)
+                    tmdb_key = tmdb_keys.get(service, '<<tmdb_key>>')
+                    streaming_string += f"""
+  {service}:
+    variables: {{key: {service}, tmdb_key: {tmdb_key}, weight: {weight}, limit: {limit}}}
+    template: {{name: streaming}}
+"""
+            if use_extra_streaming:
+                for service, service_settings in extra_streaming_services.items():
+                    if service_settings.get('use', True):
+                        limit = service_settings.get('limit', 1500)
+                        weight = service_settings.get('weight', 100)
+                        tmdb_key = tmdb_keys.get(service, '<<tmdb_key>>')
+                        streaming_string += f"""
+  {service}:
+    variables: {{key: {service}, tmdb_key: {tmdb_key}, weight: {weight}, limit: {limit}}}
+    template: {{name: streaming}}
+"""
+############################
+#  Write Streaming YAML   #
+############################
+
+            streaming_save_folder = streaming_settings.get('streaming_save_folder')
+            save_folder = streaming_save_folder
+            normalized_library_name = library_name.lower().replace(' ', '-')
+            file_name = f"overlay-streaming-{normalized_library_name}.yml"
+            name = 'Streaming Overlay'
+
+            write_yaml_file(config_directory, save_folder, name, file_name, streaming_string)
+
+    except Exception as e:
+        logger.error(f"An error occurred while generating 'Show Status Overlay' files: {e}")

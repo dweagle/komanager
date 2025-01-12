@@ -173,6 +173,28 @@ settings = CommentedMap({
         "sort_title": DoubleQuotedScalarString("!012_In_History")
     }),
 
+    "streaming_overlay": CommentedMap({
+        "use": True,
+        "streaming_save_folder": "path/to/folder",
+        "streaming_image_folder": "path/to/images",
+        "vertical_align": "top",
+        "horizontal_align": "left",
+        "vertical_offset": 35,
+        "horizontal_offset": 30,
+        "font": "path/to/kometa-font",
+        "back_width": 215,
+        "back_height": 70,
+        "back_radius": 10,
+        "back_color": DoubleQuotedScalarString("#000000B3"),
+        "ignore_blank_results": "true",
+        "watch_region": "US",
+        "with_original_language": "en",
+        "with_watch_monetization_types": "flatrate|free|ads|rent|buy",
+        "use_vote_count": True,
+        "vote_count": 2,
+        "use_extra_streaming": True
+    }),
+
     "top_10": CommentedMap({
         "top_10_overlay": CommentedMap({
             "use": True,
@@ -202,27 +224,129 @@ settings = CommentedMap({
     })
 })
 
+streaming_services = CommentedMap({
+    "default_streaming": CommentedMap({
+        "Netflix": CommentedMap({"use": True, "limit": 1500, "weight": 180}),
+        "AppleTV": CommentedMap({"use": True, "limit": 1500, "weight": 170}),
+        "Disney": CommentedMap({"use": True, "limit": 1500, "weight": 160}),
+        "Max": CommentedMap({"use": True, "limit": 1500, "weight": 150}),
+        "Prime": CommentedMap({"use": True, "limit": 1500, "weight": 140}),
+        "Crunchyroll": CommentedMap({"use": True, "limit": 1500, "weight": 130}),
+        "YouTube": CommentedMap({"use": True, "limit": 1500, "weight": 120}),
+        "Hulu": CommentedMap({"use": True, "limit": 1500, "weight": 100}),
+        "Paramount": CommentedMap({"use": True, "limit": 1500, "weight": 90}),
+        "Peacock": CommentedMap({"use": True, "limit": 1500, "weight": 80}),
+        "Crave": CommentedMap({"use": True, "limit": 1500, "weight": 70}),
+        "Discovery+": CommentedMap({"use": True, "limit": 1500, "weight": 60}),
+        "NOW": CommentedMap({"use": True, "limit": 1500, "weight": 55}),
+        "All 4": CommentedMap({"use": True, "limit": 1500, "weight": 50}),
+        "BritBox": CommentedMap({"use": True, "limit": 1500, "weight": 40}),
+        "BET+": CommentedMap({"use": True, "limit": 1500, "weight": 30})
+    }),
+
+    "extra_streaming": CommentedMap({
+        "AMC+": CommentedMap({"use": True, "limit": 1500, "weight": 25}),
+        "Freevee": CommentedMap({"use": True, "limit": 1500, "weight": 20}),
+        "FuboTV": CommentedMap({"use": True, "limit": 1500, "weight": 20}),
+        "FXNOW": CommentedMap({"use": True, "limit": 1500, "weight": 25}),
+        "Hoopla": CommentedMap({"use": True, "limit": 1500, "weight": 20}),
+        "MGM+": CommentedMap({"use": True, "limit": 1500, "weight": 25}),
+        "Starz": CommentedMap({"use": True, "limit": 1500, "weight": 27}),
+        "TBS": CommentedMap({"use": True, "limit": 1500, "weight": 25}),
+        "TNT": CommentedMap({"use": True, "limit": 1500, "weight": 25}),
+        "truTV": CommentedMap({"use": True, "limit": 1500, "weight": 25}),
+        "tubiTV": CommentedMap({"use": True, "limit": 1500, "weight": 20}),
+        "USA": CommentedMap({"use": True, "limit": 1500, "weight": 25})
+    })
+})
+
+def set_flow_style(commented_map):
+    for value in commented_map.values():
+        if isinstance(value, CommentedMap):
+            value.fa.set_flow_style()
+
+set_flow_style(streaming_services["default_streaming"])
+set_flow_style(streaming_services["extra_streaming"])
+
+streaming_overlay = settings["streaming_overlay"]
+streaming_overlay.insert(list(streaming_overlay.keys()).index("use_extra_streaming") + 1, "streaming_services", streaming_services)
+
 def add_comments(settings):
     # End of line comment spacing
     max_key_length = max(len(key) for key in settings.keys())
 
     # Schema comment
-    settings.yaml_set_start_comment("yaml-language-server: $schema=https://raw.githubusercontent.com/dweagle/komanager/main/json_schema/settings.json\n\n")
+    settings.yaml_set_start_comment(
+        "yaml-language-server: $schema=https://raw.githubusercontent.com/"
+        "dweagle/komanager/main/json_schema/settings.json\n\n"
+    )
 
     # Section comments and spacing
-    settings.yaml_set_comment_before_after_key("libraries", before="Plex libraries to create overlays/collections for. Library type is 'show' or 'movie'.")
-    settings.yaml_set_comment_before_after_key("status_overlay", before="\nSettings for Status Overlay ('show' libraries only).")
-    settings.yaml_set_comment_before_after_key("movie_new_release", before="\nNew Movie Release Settings - Uses 'status_overlay: overlay_settings'.")
-    settings.yaml_set_comment_before_after_key("returning_soon_collection", before="\nReturning Soon Collection Settings ('show' libraries only)")
-    settings.yaml_set_comment_before_after_key("in_history_collection", before="\nIn History Collection Settings")
-    settings.yaml_set_comment_before_after_key("top_10", before="\nTop 10 Overlay and Collection Settings")
-
+    settings.yaml_set_comment_before_after_key(
+        "libraries",
+        before="Plex libraries to create overlays/collections for. "
+               "Library type is 'show' or 'movie'."
+    )
+    settings.yaml_set_comment_before_after_key(
+        "status_overlay",
+        before="\nSettings for Status Overlay ('show' libraries only)."
+    )
+    settings.yaml_set_comment_before_after_key(
+        "movie_new_release",
+        before="\nNew Movie Release Settings - Uses 'status_overlay: overlay_settings'."
+    )
+    settings.yaml_set_comment_before_after_key(
+        "returning_soon_collection",
+        before="\nReturning Soon Collection Settings ('show' libraries only)"
+    )
+    settings.yaml_set_comment_before_after_key(
+        "in_history_collection",
+        before="\nIn History Collection Settings"
+    )
+    settings.yaml_set_comment_before_after_key(
+        "streaming_overlay",
+        before="\nStreaming Overlay Settings ('show' and 'movie' libraries)"
+    )
+    settings.yaml_set_comment_before_after_key(
+        "top_10",
+        before="\nTop 10 Overlay and Collection Settings"
+    )
+    settings["streaming_overlay"]["streaming_services"].yaml_set_comment_before_after_key(
+        "default_streaming",
+        before="Default Streaming Overlays"
+    )
+    settings["streaming_overlay"]["streaming_services"].yaml_set_comment_before_after_key(
+        "extra_streaming",
+        before="Extra Overlays"
+    )
     # End of line comments
-    settings["status_overlay"].yaml_add_eol_comment("Adjust overlay position, size, font, TMDB settings, save location, etc.", "overlay_settings", column=max_key_length + 30)
-    settings["status_overlay"]["overlay_settings"].yaml_add_eol_comment("Kometa must have permissions for save, font, and poster paths.", "overlay_save_folder", column=max_key_length + 30)
-    settings["status_overlay"].yaml_add_eol_comment("Turn overlays off/on, adjust font color, back color, and text.", "use_overlays", column=max_key_length + 30)
+    settings["status_overlay"].yaml_add_eol_comment(
+        "Adjust overlay position, size, font, TMDB settings, save location, etc.",
+        "overlay_settings",
+        column=max_key_length + 20
+    )
+    settings["status_overlay"]["overlay_settings"].yaml_add_eol_comment(
+        "Kometa must have permissions for save, font, image, and poster paths.",
+        "overlay_save_folder",
+        column=max_key_length + 20
+    )
+    settings["status_overlay"].yaml_add_eol_comment(
+        "Turn overlays off/on, adjust font color, back color, and text.",
+        "use_overlays",
+        column=max_key_length + 20
+    )
+    settings["streaming_overlay"].yaml_add_eol_comment(
+        "Kometa must have permissions for image folder path.",
+        "streaming_image_folder",
+        column=max_key_length + 20
+    )
+    settings["streaming_overlay"].yaml_add_eol_comment(
+        "Use streaming overlays not found in Kometa default streaming.",
+        "use_extra_streaming",
+        column=max_key_length + 20
+    )
 
-def create_settings_file(main_directory, run_now, run_now_env, in_docker):
+def create_settings_file(main_directory, run_now=False, run_now_env=False, in_docker=False):
     settings_file_path = os.path.join(main_directory, settings_filename)
 
     try:
@@ -307,6 +431,13 @@ def update_settings_file(main_directory):
         settings_changed = existing_settings != updated_settings
         strip_comments(updated_settings)
         add_comments(updated_settings)
+
+        if "streaming_services" in updated_settings["streaming_overlay"]:
+            if "default_streaming" in updated_settings["streaming_overlay"]["streaming_services"]:
+                set_flow_style(updated_settings["streaming_overlay"]["streaming_services"]["default_streaming"])
+            if "extra_streaming" in updated_settings["streaming_overlay"]["streaming_services"]:
+                set_flow_style(updated_settings["streaming_overlay"]["streaming_services"]["extra_streaming"])
+
         with open(settings_file_path, 'w') as file:
             yaml.dump(updated_settings, file)
 

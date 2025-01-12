@@ -30,7 +30,7 @@ def validate_settings(config_directory):
             logger.error(f"{indentlog}Settings file format is invalid. Expected a dictionary.")
             return False
 
-        required_sections = ['libraries', 'status_overlay', 'returning_soon_collection', 'movie_new_release', 'in_history_collection', 'top_10']
+        required_sections = ['libraries', 'status_overlay', 'returning_soon_collection', 'movie_new_release', 'in_history_collection', 'streaming_overlay', 'top_10']
         for section in required_sections:
             if section not in settings or not isinstance(settings[section], dict) or not settings[section]:
                 logger.error(f"{indentlog}The settings file does not contain a valid '{section}' section or it is empty.")
@@ -45,6 +45,8 @@ def validate_settings(config_directory):
         if not validate_returning_soon_collection(settings['returning_soon_collection'], config_directory):
             return False
         if not validate_in_history_collection(settings['in_history_collection'], config_directory):
+            return False
+        if not validate_streaming_overlay(settings['streaming_overlay'], config_directory):
             return False
         if not validate_top_10(settings['top_10'], config_directory):
             return False
@@ -172,6 +174,58 @@ def validate_in_history_collection(in_history_settings, config_directory):
 
     return True
 
+def validate_streaming_overlay(streaming_overlay, config_directory):
+    logger.info("")
+    logger.info(f"{indentlog}streaming_overlay:")
+
+    validate_boolean_setting(streaming_overlay, 'use', True)
+    validate_path_setting(streaming_overlay, 'streaming_save_folder', config_directory, True)
+    validate_path_setting(streaming_overlay, 'streaming_image_folder', config_directory, True)
+    validate_choice_setting(streaming_overlay, 'vertical_align', ['top', 'center', 'bottom'], 'top')
+    validate_choice_setting(streaming_overlay, 'horizontal_align', ['left', 'center', 'right'], 'left')
+    validate_integer_setting(streaming_overlay, 'vertical_offset', 35, 0, None)
+    validate_integer_setting(streaming_overlay, 'horizontal_offset', 30, 0, None)
+    validate_path_setting(streaming_overlay, 'font', f"{config_directory}/path/to/kometa-font", True)
+    validate_integer_setting(streaming_overlay, 'back_width', 215, 0, None)
+    validate_integer_setting(streaming_overlay, 'back_height', 70, 0, None)
+    validate_integer_setting(streaming_overlay, 'back_radius', 10, 0, None)
+    validate_color_setting(streaming_overlay, 'back_color', '#000000B3')
+    validate_choice_setting(streaming_overlay, 'ignore_blank_results', ['true', 'false', True, False], 'true')
+    validate_string_length_setting(streaming_overlay, 'watch_region', 2, 'US')
+    validate_string_length_setting(streaming_overlay, 'with_original_language', 2, 'en')
+    validate_monetization_types(streaming_overlay, 'with_watch_monetization_types', 'flatrate|free|ads|rent|buy')
+    validate_boolean_setting(streaming_overlay, 'use_vote_count', True)
+    validate_integer_setting(streaming_overlay, 'vote_count', 2, 1, None)
+    validate_boolean_setting(streaming_overlay, 'use_extra_streaming', True)
+
+    if 'streaming_services' in streaming_overlay:
+        logger.info(f"{indentlog2}streaming_services:")
+        streaming_services = streaming_overlay['streaming_services']
+        validate_streaming_services(streaming_services, 'default_streaming', 'DEFAULT OVERLAYS')
+        validate_streaming_services(streaming_services, 'extra_streaming', 'EXTRA OVERLAYS')
+    else:
+        logger.error(f"{indentlog2}Missing 'streaming_services' section in 'streaming_overlay'.")
+        return False
+
+    return True
+
+def validate_streaming_services(streaming_services, key, overlay_type):
+    logger.info(f"{indentlog3}{key}:")
+    logger.info(f"{indentlog3}# {overlay_type}")
+
+    if key in streaming_services:
+        services = streaming_services[key]
+        for service_name, service_settings in services.items():
+            logger.info(f"{indentlog3}{service_name}: {service_settings}")
+            validate_boolean_setting(service_settings, 'use', True, log=False)
+            validate_integer_setting(service_settings, 'limit', 1500, 1, None, log=False)
+            validate_integer_setting(service_settings, 'weight', 180, 1, None, log=False)
+    else:
+        logger.error(f"{indentlog3}Missing '{key}' section in 'streaming_services'.")
+        return False
+
+    return True
+
 def validate_top_10(top_10_settings, config_directory):
     logger.info("")
     logger.info(f"{indentlog}top_10:")
@@ -213,89 +267,110 @@ def validate_top_10(top_10_settings, config_directory):
 
     return True
 
-def validate_path_setting(settings, key, default, allow_blank=False):
+def validate_path_setting(settings, key, default, allow_blank=False, log=True):
     value = settings.get(key, default)
     if (value is None or (not allow_blank and isinstance(value, str) and value.strip() == "") or value in ["path/to/folder", "path/to/kometa-poster", "path/to/kometa-font"]):
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' setting or path not set. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' setting or path not set. Defaulting to '{default}'.")
     else:
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_boolean_setting(settings, key, default):
+def validate_boolean_setting(settings, key, default, log=True):
     value = settings.get(key, None)
     if value is None:
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' setting. Defaulting to {default}.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' setting. Defaulting to {default}.")
     elif not isinstance(value, bool):
-        logger.warning(f"{indentlog3}{key}: '{key}' setting is not a valid True or False. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: '{key}' setting is not a valid True or False. Defaulting to '{default}'.")
     else:
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_integer_setting(settings, key, default, min_value, max_value):
+def validate_integer_setting(settings, key, default, min_value, max_value, log=True):
     value = settings.get(key)
     if value is None:
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to {default}.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to {default}.")
     elif not isinstance(value, int) or (min_value is not None and value < min_value) or (max_value is not None and value > max_value):
-        logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be number between {min_value} and {max_value}. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be number between {min_value} and {max_value}. Defaulting to '{default}'.")
     else:
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_string_setting(settings, key, default, allow_blank=False):
+def validate_string_setting(settings, key, default, allow_blank=False, log=True):
     value = settings.get(key, default)
     if value is None or (not allow_blank and not value.strip()):
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
     else:
         if not (value.startswith('"') and value.endswith('"')):
             value = f'"{value}"'
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_string_length_setting(settings, key, length, default):
+def validate_string_length_setting(settings, key, length, default, log=True):
     value = settings.get(key, None)
     if value is None:
-        logger.warning(f"{indentlog3}{key}: Missing '{key}'. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}'. Defaulting to '{default}'.")
     elif not isinstance(value, str) or len(value) != length:
-        logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be a {length}-character string. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be a {length}-character string. Defaulting to '{default}'.")
     else:
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_color_setting(settings, key, default):
+def validate_color_setting(settings, key, default, log=True):
     pattern = r"^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$"
     value = settings.get(key, None)
     if value is None:
         if not (default.startswith('"') and default.endswith('"')):
             default = f'"{default}"'
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
     elif not re.match(pattern, value):
         if not (value.startswith('"') and value.endswith('"')):
             value = f'"{value}"'
-        logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be a valid color code. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be a valid color code. Defaulting to '{default}'.")
     else:
-        if not (value.startswith('"') and value.endswith('"')):
-            value = f'"{value}"'
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_choice_setting(settings, key, choices, default):
+def validate_choice_setting(settings, key, choices, default, log=True):
     value = settings.get(key, None)
     if value is None:
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
     elif value not in choices:
-        logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be one of {choices}. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Invalid '{key}' value: {value}. Must be one of {choices}. Defaulting to '{default}'.")
     else:
-        logger.info(f"{indentlog3}{key}: {value}")
+        if log:
+            logger.info(f"{indentlog3}{key}: {value}")
 
-def validate_monetization_types(settings, key, default):
+def validate_monetization_types(settings, key, default, log=True):
     allowed_types = {"flatrate", "free", "ads", "rent", "buy"}
     separators = {"|", ","}
     value = settings.get(key, default)
 
     if value is None:
-        logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
+        if log:
+            logger.warning(f"{indentlog3}{key}: Missing '{key}' value. Defaulting to '{default}'.")
     else:
         try:
             separator = next((sep for sep in separators if sep in value), None)
             types = value.split(separator) if separator else [value]
             invalid_types = [t for t in types if t not in allowed_types]
             if invalid_types:
-                logger.warning(f"{indentlog3}{key}: Invalid '{key}' values: {invalid_types}. Defaulting to '{default}'.")
+                if log:
+                    logger.warning(f"{indentlog3}{key}: Invalid '{key}' values: {invalid_types}. Defaulting to '{default}'.")
             else:
-                logger.info(f"{indentlog3}{key}: {value}")
+                if log:
+                    logger.info(f"{indentlog3}{key}: {value}")
         except Exception as e:
-            logger.warning(f"{indentlog3}{key}: Error validating '{key}': {e}. Defaulting to '{default}'.")
+            if log:
+                logger.warning(f"{indentlog3}{key}: Error validating '{key}': {e}. Defaulting to '{default}'.")

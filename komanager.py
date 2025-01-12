@@ -9,7 +9,7 @@ from scripts.logger import log_setup
 from scripts.scheduler import schedule_main, scheduler
 from scripts.settings import create_settings_file, update_settings_file
 from scripts.validate_settings import validate_settings
-from scripts.yaml_generator import create_library_yaml, create_collection_yaml, create_new_movie_yaml, create_in_history_yaml, create_top10_overlay_yaml, create_top10_collection_yaml
+from scripts.yaml_generator import create_status_yaml, create_collection_yaml, create_new_movie_yaml, create_in_history_yaml, create_top10_overlay_yaml, create_top10_collection_yaml, create_streaming_yaml
 
 logger = logging.getLogger(__name__)
 schedule_logger = logging.getLogger('schedule')
@@ -29,6 +29,9 @@ font_dest = os.path.join(config_directory, 'fonts')
 
 poster_src = '/posters' if in_docker else os.path.join(os.getcwd(), 'posters')
 poster_dest = os.path.join(config_directory, 'posters')
+
+streaming_images_src = '/streaming-images' if in_docker else os.path.join(os.getcwd(), 'streaming-images')
+streaming_images_dest = os.path.join(config_directory, 'streaming-images')
 
 parser = argparse.ArgumentParser(description="Run the main script.")
 parser.add_argument('-r', '--run-now', action='store_true', help="Run the script immediately and bypass the schedule.")
@@ -64,7 +67,8 @@ def copy_new_or_changed_files(src, dest):
 if in_docker:
     copy_new_or_changed_files(font_src, font_dest)
     copy_new_or_changed_files(poster_src, poster_dest)
-
+    copy_new_or_changed_files(streaming_images_src, streaming_images_dest)
+    
 def main():
     log_setup(config_directory)
 
@@ -113,12 +117,13 @@ def main_logic():
         logger.info("Generating overlay files for Kometa.")
         logger.info("")
 
-        create_library_yaml(config_directory)
+        create_status_yaml(config_directory)
         create_collection_yaml(config_directory)
         create_in_history_yaml(config_directory)
         create_new_movie_yaml(config_directory)
         create_top10_overlay_yaml(config_directory)
         create_top10_collection_yaml(config_directory)
+        create_streaming_yaml(config_directory)
 
         logger.info("All library overlay and collection files created.")
         logger.info("----------------------------------------------------------")
