@@ -185,7 +185,6 @@ def validate_streaming_overlay(streaming_overlay, config_directory):
     validate_choice_setting(streaming_overlay, 'horizontal_align', ['left', 'center', 'right'], 'left')
     validate_integer_setting(streaming_overlay, 'vertical_offset', 35, 0, None)
     validate_integer_setting(streaming_overlay, 'horizontal_offset', 30, 0, None)
-    validate_path_setting(streaming_overlay, 'font', f"{config_directory}/path/to/kometa-font", True)
     validate_integer_setting(streaming_overlay, 'back_width', 215, 0, None)
     validate_integer_setting(streaming_overlay, 'back_height', 70, 0, None)
     validate_integer_setting(streaming_overlay, 'back_radius', 10, 0, None)
