@@ -181,7 +181,6 @@ settings = CommentedMap({
         "horizontal_align": "left",
         "vertical_offset": 35,
         "horizontal_offset": 30,
-        "font": "path/to/kometa-font",
         "back_width": 215,
         "back_height": 70,
         "back_radius": 10,
