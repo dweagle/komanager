@@ -276,6 +276,94 @@
         "sort_title"
       ]
     },
+    "streaming_overlay": {
+      "type": "object",
+      "properties": {
+        "use": { "type": "boolean" },
+        "streaming_save_folder": { "type": "string" },
+        "streaming_image_folder": { "type": "string" },
+        "vertical_align": { "type": "string", "enum": ["top","center","bottom"] },
+        "horizontal_align": { "type": "string", "enum": ["left","center","right"] },
+        "vertical_offset": { "type": "integer", "minimum": 0 },
+        "horizontal_offset": { "type": "integer", "minimum": 0 },
+        "back_width": { "type": "integer", "minimum": 0 },
+        "back_height": { "type": "integer", "minimum": 0 },
+        "back_radius": { "type": "integer", "minimum": 0 },
+        "back_color": { "type": "string", "pattern": "^\\#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{4}|[A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$" },
+        "ignore_blank_results": { "type": "string" },
+        "watch_region": { "type": "string" },
+        "with_original_language": { "type": "string" },
+        "with_watch_monetization_types": { "type": "string", "pattern": "^(flatrate|free|ads|rent|buy)([|,](flatrate|free|ads|rent|buy))*$" },
+        "use_vote_count":{ "type": "boolean" },
+        "vote_count": { "type": "integer", "minimum": 0 },
+        "use_extra_streaming": { "type": "boolean" },
+        "streaming_services": {
+          "type": "object",
+          "properties": {
+            "default_streaming": {
+              "type": "object",
+              "properties": {
+                "Netflix": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "AppleTV": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Disney": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Max": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Prime": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Crunchyroll": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "YouTube": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Hulu": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Paramount": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Peacock": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Crave": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Discovery+": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "NOW": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "All 4": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "BritBox": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "BET+": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}}
+              }
+            },
+            "extra_streaming": {
+              "type": "object",
+              "properties": {
+                "AMC+": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Freevee": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "FuboTV": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "FXNOW": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Hoopla": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "MGM+": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "Starz": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "TBS": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "TNT": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "truTV": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "tubiTV": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "USA": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}}
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "use",
+        "streaming_save_folder",
+        "streaming_image_folder",
+        "vertical_align",
+        "horizontal_align",
+        "vertical_offset",
+        "horizontal_offset",
+        "back_width",
+        "back_height",
+        "back_radius",
+        "back_color",
+        "ignore_blank_results",
+        "watch_region",
+        "with_original_language",
+        "with_watch_monetization_types",
+        "use_vote_count",
+        "vote_count",
+        "use_extra_streaming",
+        "streaming_services"
+      ]
+    },
+
     "top_10": {
       "type": "object",
       "properties": {
@@ -328,5 +416,13 @@
       }
     }
   },
-  "required": ["libraries", "status_overlay", "movie_new_release", "returning_soon_collection", "in_history_collection", "top_10"]
+  "required": [
+    "libraries", 
+    "status_overlay", 
+    "movie_new_release", 
+    "returning_soon_collection", 
+    "in_history_collection", 
+    "streaming_overlay", 
+    "top_10"
+  ]
 }
