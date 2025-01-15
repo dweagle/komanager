@@ -661,7 +661,7 @@ def create_collection_yaml(config_directory):
         
         libraries = settings.get('libraries', {})
 
-        overlay_settings = settings.get('status_overlay_settings', {}).get('overlay_settings', {})
+        overlay_settings = settings.get('status_overlay', {}).get('overlay_settings', {})
 
         collection_settings = settings.get('returning_soon_collection', {})
 
