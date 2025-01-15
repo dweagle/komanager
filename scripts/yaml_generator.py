@@ -773,31 +773,30 @@ def create_in_history_yaml(config_directory):
         ending_year = in_history_settings.get('ending_year', datetime.now().year)
         in_history_range = get_with_defaults(in_history_settings, 'in_history_range', 'range')
 
-        current_date = datetime.now()
-        current_month = current_date.month
-        current_day = current_date.day
+        current_date = datetime.now()   
+        current_week_monday = current_date - timedelta(days=current_date.weekday())
+        first_day_of_month = datetime(current_date.year, current_date.month, 1)
 
         def generate_date_ranges(range_type):
             date_ranges = []
             for year in range(starting_year, ending_year + 1):
                 if range_type == 'days':
-                    date_before = (datetime(year, current_month, current_day) - timedelta(days=1)).strftime('%m/%d/%Y')
-                    date_after = (datetime(year, current_month, current_day) + timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_before = (datetime(year, current_date.month, current_date.day) - timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_after = (datetime(year, current_date.month, current_date.day) + timedelta(days=1)).strftime('%m/%d/%Y')
                     date_ranges.append({
                         'release.after': date_before,
                         'release.before': date_after
                     })
                 elif range_type == 'months':
-                    days_in_month = (datetime(year, current_month % 12 + 1, 1) - timedelta(days=1)).day
-                    date_before = (datetime(year, current_month, 1) - timedelta(days=1)).strftime('%m/%d/%Y')
-                    date_after = (datetime(year, current_month, days_in_month) + timedelta(days=1)).strftime('%m/%d/%Y')
+                    days_in_month = (datetime(year, current_date.month % 12 + 1, 1) - timedelta(days=1)).day
+                    date_before = (datetime(year, first_day_of_month.month, 1) - timedelta(days=1)).strftime('%m/%d/%Y')
+                    date_after = (datetime(year, first_day_of_month.month, days_in_month) + timedelta(days=1)).strftime('%m/%d/%Y')
                     date_ranges.append({
                         'release.after': date_before,
                         'release.before': date_after
                     })
                 elif range_type == 'weeks':
-                    # Calculate the start and end of the current week for each year
-                    start_of_week = datetime(year, current_month, current_day) - timedelta(days=datetime(year, current_month, current_day).weekday())  # Monday
+                    start_of_week = datetime(year, current_week_monday.month, current_week_monday.day) - timedelta(days=datetime(year, current_week_monday.month, current_week_monday.day).weekday())  # Monday
                     end_of_week = start_of_week + timedelta(days=6)  # Sunday
                     date_before = (start_of_week - timedelta(days=1)).strftime('%m/%d/%Y')
                     date_after = (end_of_week + timedelta(days=1)).strftime('%m/%d/%Y')
