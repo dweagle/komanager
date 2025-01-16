@@ -57,7 +57,7 @@ libraries:                   # Plex library names to create Kometa overlays and 
   TV Shows:                  # Change, add, or remove - Need at least one library.
     library_type: show       # Library type can be set to as 'show' or 'movie'.
     is_anime: False          # True removes TMDB with_original_language:'en' setting for use with Anime libraries or libraries with non-English shows.         
-    use_watch_region: True   # False removes TMDB watch_region and watch_monetization settings.
+    use_watch_region: True   # False removes TMDB watch_region and watch_monetization settings. 
   4k TV Shows:
     library_type: show
     is_anime: False
@@ -200,6 +200,61 @@ in_history_collection:
   minimum_items: 1              # Minimum items in collection before being considered for deletion.
   delete_below_minimum: 'true'  # Will delete collection in Plex if it goes below minimum items.
   sort_title: "!012_In_History" # Sort order title of collection in Plex.
+
+# Streaming Overlay Settings ('show' and 'movie' libraries)
+streaming_overlay:
+  use: true
+  streaming_save_folder: /home/denny/docker/kometa/config/dadflix-custom/komanager
+  streaming_image_folder: config/dadflix-custom/komanager/streaming-images # Kometa must have permissions for image folder path.
+  vertical_align: top
+  horizontal_align: left
+  vertical_offset: 35
+  horizontal_offset: 30
+  back_width: 215
+  back_height: 70
+  back_radius: 10
+  back_color: "#000000D9"
+  ignore_blank_results: 'true'
+  watch_region: US
+  with_original_language: en
+  with_watch_monetization_types: flatrate|free|ads|rent|buy
+  use_vote_count: true
+  vote_count: 2
+  use_extra_streaming: true                  # Use streaming overlays not found in Kometa default streaming.
+  streaming_services:
+# Default Streaming Overlays                 # Recommended limits and weights
+    default_streaming:
+      Netflix: {use: true, limit: 1500, weight: 180}  # These streaming services are found in Kometa's defaults.
+      AppleTV: {use: true, limit: 1500, weight: 170}
+      Disney: {use: true, limit: 1500, weight: 160}
+      Max: {use: true, limit: 1500, weight: 150}
+      Prime: {use: true, limit: 1500, weight: 140}
+      Crunchyroll: {use: true, limit: 1500, weight: 130}
+      YouTube: {use: false, limit: 1500, weight: 120}
+      Hulu: {use: true, limit: 1500, weight: 100}
+      Paramount: {use: true, limit: 1500, weight: 90}
+      Peacock: {use: true, limit: 1500, weight: 80}
+      Crave: {use: false, limit: 1500, weight: 70}
+      Discovery+: {use: true, limit: 1500, weight: 60}
+      NOW: {use: false, limit: 1500, weight: 55}
+      All 4: {use: false, limit: 1500, weight: 50}
+      BritBox: {use: false, limit: 1500, weight: 40}
+      BET+: {use: false, limit: 1500, weight: 30}
+# Extra Overlays
+    extra_streaming:
+      AMC+: {use: true, limit: 1500, weight: 25}      # These streaming services are not in Kometa's defaults.
+      Freevee: {use: false, limit: 1500, weight: 20}
+      FuboTV: {use: false, limit: 1500, weight: 20}
+      FXNOW: {use: true, limit: 1500, weight: 25}
+      Hoopla: {use: false, limit: 1500, weight: 20}
+      MGM+: {use: true, limit: 1500, weight: 25}
+      Starz: {use: true, limit: 1500, weight: 27}
+      TBS: {use: true, limit: 1500, weight: 25}
+      TNT: {use: true, limit: 1500, weight: 25}
+      truTV: {use: false, limit: 1500, weight: 25}
+      tubiTV: {use: false, limit: 1500, weight: 20}
+      USA: {use: true, limit: 1500, weight: 25}
+  font: path/to/kometa-font
 
 # Top 10 Overlay and Collection Settings
 top_10:
