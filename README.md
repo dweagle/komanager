@@ -3,10 +3,11 @@
 <div align="center">- Show Status Overlays - (Upcoming, Returning, Ended, Canceled, New Series,</div>
 <div align="center">New - Airs MM/DD, Airing, Airs Next MM/DD, and Returns MM/DD)</div>
 <div align="center">KoManager will update dates daily to keep overlays fresh.</div><br>
+<div align="center">- 'NEW RELEASE' status overlay for movie posters that match your show status overlay.</div><br>
 <div align="center">- 'Returning Soon' collection to display shows that will return to airing.</div><br>
 <div align="center">- 'In History' collection to display items released in your library from this day/week/month in history.</div><br>
-<div align="center">- 'NEW RELEASE' status overlay for movie posters.</div><br>
-<div align="center">- 'Top 10 overlay and collection for major streaming services using <a href="https://github.com/Navino16/flixpatrol-top10-on-trakt">Navion16's Flixpatrol Top 10</a> Trakt list.</div><br>
+<div align="center">- 'Streaming' overlay to identify which streaming services shows and movies are available.</div><br>
+<div align="center">- 'Top 10' overlay and collection for major streaming services using <a href="https://github.com/Navino16/flixpatrol-top10-on-trakt">Navion16's Flixpatrol Top 10</a> Trakt list.</div><br>
 <div align="center">Inspired by <a href="https://github.com/InsertDisc/pattrmm">pattrmm</a> by InsertDisc</div>
 <br>
 <div align="center"> Example Statuses</div>
@@ -202,7 +203,7 @@ in_history_collection:
   sort_title: "!012_In_History" # Sort order title of collection in Plex.
 
 # Streaming Overlay Settings ('show' and 'movie' libraries)
-streaming_overlay:
+streaming_overlay:  # Will apply a streaming service icon on your posters.  If no service is found, it will put a Plex icon instead.
   use: true
   streaming_save_folder: /home/denny/docker/kometa/config/dadflix-custom/komanager
   streaming_image_folder: config/dadflix-custom/komanager/streaming-images # Kometa must have permissions for image folder path.
@@ -222,10 +223,10 @@ streaming_overlay:
   vote_count: 2
   use_extra_streaming: true                  # Use streaming overlays not found in Kometa default streaming.
   streaming_services:
-# Default Streaming Overlays                 # Recommended limits and weights
+# Default Streaming Overlays                 # Recommended limits and weights.
     default_streaming:
       Netflix: {use: true, limit: 1500, weight: 180}  # These streaming services are found in Kometa's defaults.
-      AppleTV: {use: true, limit: 1500, weight: 170}
+      AppleTV: {use: true, limit: 1500, weight: 170}  # Set 'use' to true to use or false to not use this streaming service overlay.
       Disney: {use: true, limit: 1500, weight: 160}
       Max: {use: true, limit: 1500, weight: 150}
       Prime: {use: true, limit: 1500, weight: 140}
@@ -238,12 +239,12 @@ streaming_overlay:
       Discovery+: {use: true, limit: 1500, weight: 60}
       NOW: {use: false, limit: 1500, weight: 55}
       All 4: {use: false, limit: 1500, weight: 50}
-      BritBox: {use: false, limit: 1500, weight: 40}
+      BritBox: {use: false, limit: 1500, weight: 40}  # ex. I don't have shows from BritBox, so I turn this one to false to shorten run time.
       BET+: {use: false, limit: 1500, weight: 30}
 # Extra Overlays
     extra_streaming:
       AMC+: {use: true, limit: 1500, weight: 25}      # These streaming services are not in Kometa's defaults.
-      Freevee: {use: false, limit: 1500, weight: 20}
+      Freevee: {use: false, limit: 1500, weight: 20}  # These services take care of a lot of the plex fallback streaming icon.
       FuboTV: {use: false, limit: 1500, weight: 20}
       FXNOW: {use: true, limit: 1500, weight: 25}
       Hoopla: {use: false, limit: 1500, weight: 20}
@@ -257,7 +258,7 @@ streaming_overlay:
   font: path/to/kometa-font
 
 # Top 10 Overlay and Collection Settings
-top_10:
+top_10:           # Places a TOP 10 icon on your posters if shows are in a services top ten list.
   top_10_overlay:
     use: true
     overlay_save_folder: /path/to/folder
