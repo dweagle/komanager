@@ -1078,10 +1078,10 @@ def create_streaming_yaml(config_directory):
         extra_streaming_services = streaming_settings.get('streaming_services', {}).get('extra_streaming', {})
 
         tmdb_keys = {
-            'Netflix': '8', 'AppleTV': '350', 'Disney': '337', 'Max': '1899', 'Prime': '9',
-            'Crunchyroll': '283|1968', 'YouTube': '188', 'Hulu': '15', 'Paramount': '531|1770|1853',
-            'Peacock': '386', 'Crave': '230', 'Discovery+': '510', 'NOW': '39', 'All 4': '103',
-            'BritBox': '151', 'BET+': '1759', 'AMC+': '526|1854|528|635', 'Freevee': '613',
+            'Netflix': '8', 'AppleTV': '350', 'Disney': '337', 'Max': '1899|1825', 'Prime': '9',
+            'Crunchyroll': '283|1968', 'YouTube': '188', 'Hulu': '15', 'Paramount': '531|2303|1770|1853|582|633',
+            'Peacock': '386|387', 'Crave': '230', 'Discovery+': '510|520|1708|524|584', 'NOW': '39', 'All 4': '103',
+            'BritBox': '151', 'BET+': '1759', 'AMC+': '80|526|1854|528|635', 'Freevee': '613',
             'FuboTV': '257', 'FXNOW': '123', 'Hoopla': '212', 'MGM+': '34|636', 'Starz': '43|1855|634|1794',
             'TBS': '506', 'TNT': '363', 'truTV': '507', 'tubiTV': '73', 'USA': '322'
 }
