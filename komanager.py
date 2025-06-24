@@ -118,9 +118,9 @@ def main_logic():
         logger.info("")
 
         create_status_yaml(config_directory)
+        create_new_movie_yaml(config_directory)
         create_collection_yaml(config_directory)
         create_in_history_yaml(config_directory)
-        create_new_movie_yaml(config_directory)
         create_top10_overlay_yaml(config_directory)
         create_top10_collection_yaml(config_directory)
         create_streaming_yaml(config_directory)

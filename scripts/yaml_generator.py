@@ -23,6 +23,7 @@ DEFAULTS = {
     'vertical_align': 'top',
     'horizontal_offset': 0,
     'vertical_offset': 38,
+    'use_backdrop': True,
     'back_width': 475,
     'back_height': 55,
     'back_radius': 30,
@@ -230,7 +231,9 @@ def create_status_yaml(config_directory):
             if library_settings.get('library_type') != 'show':
                 continue
             is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
+
             use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
+
             logger.info(f"{indentlog}Creating main status template YAML for {library_name}.")
 
             status_string = f"""# {library_name} Template
@@ -246,14 +249,24 @@ templates:
       font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
       font_color: <<font_color>>
       horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'veritcal_align')}
+      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
       horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
       vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: <<back_color>>
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+"""
+            use_backdrop = get_with_defaults(overlay_settings, 'use_backdrop', 'use_backdrop')
+            if use_backdrop:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                status_string += f"{indent3}back_color: <<back_color>>\n"
+                status_string += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                status_string += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                status_string += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
+
+            else:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                logger.info(f"{indentlog3}Removing backdrop settings from status yaml.")
+
+            status_string += f"""{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
     tmdb_discover:
       air_date.gte: <<date>>
       air_date.lte: <<date>>
@@ -298,11 +311,20 @@ templates:
       vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'veritcal_align')}
       horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
       vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: <<back_color>>
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+"""
+            if use_backdrop:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                plex_all += f"{indent3}back_color: <<back_color>>\n"
+                plex_all += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                plex_all += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                plex_all += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
+
+            else:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                logger.info(f"{indentlog3}Removing backdrop settings from status yaml.")
+
+            plex_all += f"""{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
 """
             status_string += plex_all
 
@@ -606,6 +628,8 @@ def create_new_movie_yaml(config_directory):
 
         new_release_settings = settings.get('movie_new_release', {})
 
+        use_backdrop = get_with_defaults(new_release_settings, 'use_backdrop', 'use_backdrop')
+        
         if get_with_defaults(new_release_settings, "use", "new_movie_use"):
             logger.info(f"{indentlog}'movie_new_release' 'use:' set to true. Creating 'movie_new_release' overlay.")
 
@@ -623,11 +647,20 @@ overlays:
       vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'veritcal_align')}
       horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
       vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-      back_color: "{get_with_defaults(new_release_settings, 'back_color', 'new_movie_back_color')}"
-      back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}
-      back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}
-      back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
+"""
+            if use_backdrop:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                new_movie_string += f"{indent3}back_color: \"{get_with_defaults(new_release_settings, 'back_color', 'back_color')}\"\n"
+                new_movie_string += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                new_movie_string += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                new_movie_string += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
+
+            else:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                logger.info(f"{indentlog3}Removing backdrop settings from 'Top 10 Overlay' yaml.")
+            
+            new_movie_string += f"""{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
     plex_search:
       all:
         release: {get_with_defaults(new_release_settings, 'days_to_consider_new', 'days_new')}
@@ -840,10 +873,8 @@ collections:
     visible_shared: {get_with_defaults(in_history_settings, 'visible_shared', 'IH_visible_shared').lower()}
     visible_library: {get_with_defaults(in_history_settings, 'visible_library', 'IH_visible_library').lower()}
     sync_mode: sync
-"""
-            in_history_string += f"""{indent2}summary: "Released this {summary_range} in history."
-"""
-            in_history_string += f"""{indent2}minimum_items: {get_with_defaults(in_history_settings, 'minimum_items', 'IH_minimum_items')}
+    summary: "Released this {summary_range} in history."
+    minimum_items: {get_with_defaults(in_history_settings, 'minimum_items', 'IH_minimum_items')}
     delete_below_minimum: {get_with_defaults(in_history_settings, 'delete_below_minimum', 'IH_delete_below_minimum').lower()}
     sort_title: "{get_with_defaults(in_history_settings, 'sort_title', 'IH_sort_title')}"
     plex_search:
@@ -899,11 +930,21 @@ templates:
       vertical_align: {get_with_defaults(top_overlay_settings, 'vertical_align', 'top_vertical_align')}
       horizontal_offset: {get_with_defaults(top_overlay_settings, 'horizontal_offset', 'top_horizontal_offset')}
       vertical_offset: {get_with_defaults(top_overlay_settings, 'vertical_offset', 'top_vertical_offset')}
-      back_color: "{get_with_defaults(top_overlay_settings, 'back_color', 'top_back_color')}"
-      back_width: {get_with_defaults(top_overlay_settings, 'back_width', 'top_back_width')}
-      back_height: {get_with_defaults(top_overlay_settings, 'back_height', 'top_back_height')}
-      back_radius: {get_with_defaults(top_overlay_settings, 'back_radius', 'top_back_radius')}
+"""
+            use_backdrop = get_with_defaults(top_overlay_settings, 'use_backdrop', 'use_backdrop')
+            if use_backdrop:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                top_overlay_string += f"{indent3}back_color: \"{get_with_defaults(top_overlay_settings, 'back_color', 'back_color')}\"\n"
+                top_overlay_string += f"{indent3}back_width: {get_with_defaults(top_overlay_settings, 'back_width', 'back_width')}\n"
+                top_overlay_string += f"{indent3}back_height: {get_with_defaults(top_overlay_settings, 'back_height', 'back_height')}\n"
+                top_overlay_string += f"{indent3}back_radius: {get_with_defaults(top_overlay_settings, 'back_radius', 'back_radius')}\n"
 
+            else:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                logger.info(f"{indentlog3}Removing backdrop settings from 'Movie New Release' yaml.")
+            
+            top_overlay_string += f"""
 overlays:
   
   Netflix Top 10:
@@ -1103,11 +1144,21 @@ templates:
       vertical_align: {get_with_defaults(streaming_settings, 'vertical_align', 'streaming_veritcal_align')}
       horizontal_offset: {get_with_defaults(streaming_settings, 'horizontal_offset', 'streaming_horizontal_offset')}
       vertical_offset: {get_with_defaults(streaming_settings, 'vertical_offset', 'streaming_vertical_offset')}
-      back_color:  "{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}"
-      back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}
-      back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}
-      back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}
-    ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
+"""
+            use_backdrop = get_with_defaults(streaming_settings, 'use_backdrop', 'use_backdrop')
+            if use_backdrop:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                streaming_string += f"{indent3}back_color: \"{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}\"\n"
+                streaming_string += f"{indent3}back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}\n"
+                streaming_string += f"{indent3}back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}\n"
+                streaming_string += f"{indent3}back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}\n"
+
+            else:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                logger.info(f"{indentlog3}Removing backdrop settings from 'Streaming' yaml.")
+            
+            streaming_string += f"""{indent2}ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
     tmdb_discover:
       with_watch_providers: <<tmdb_key>>
 """
@@ -1144,10 +1195,7 @@ templates:
             logger.info(f"{indentlog}Streaming template created")
             logger.info(f"{indentlog}Creating streaming overlays")
 
-            streaming_string += "\noverlays:"
-
-            plex_fallback_string = f"""
-
+            plex_fallback_string = f"""\noverlays:\n
 # Plex Fallback #
   Plex Fallback Overlay:
     overlay:
@@ -1159,18 +1207,28 @@ templates:
       vertical_align: {get_with_defaults(streaming_settings, 'vertical_align', 'streaming_veritcal_align')}
       horizontal_offset: {get_with_defaults(streaming_settings, 'horizontal_offset', 'streaming_horizontal_offset')}
       vertical_offset: {get_with_defaults(streaming_settings, 'vertical_offset', 'streaming_vertical_offset')}
-      back_color:  "{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}"
-      back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}
-      back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}
-      back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}
-    ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
-    plex_all: true
+"""
+            if use_backdrop:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                plex_fallback_string += f"{indent3}back_color: \"{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}\"\n"
+                plex_fallback_string += f"{indent3}back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}\n"
+                plex_fallback_string += f"{indent3}back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}\n"
+                plex_fallback_string += f"{indent3}back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}\n"
 
-# Streaming #
-  # Same as Kometa Default Streaming #
+            else:
+                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                logger.info(f"{indentlog3}Removing backdrop settings from 'Streaming' yaml.")
+            
+            plex_fallback_string += f"""{indent2}ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
+    plex_all: true
 """
             streaming_string += plex_fallback_string
 
+            streaming_string += f"""
+# Streaming #
+    # Same as Kometa Default Streaming #
+"""
             for service, service_settings in default_streaming_services.items():
                 if service_settings.get('use', True):
                     limit = service_settings.get('limit', 1500)
@@ -1192,6 +1250,7 @@ templates:
     variables: {{key: {service}, tmdb_key: {tmdb_key}, weight: {weight}, limit: {limit}}}
     template: {{name: streaming}}
 """
+            
 ############################
 #  Write Streaming YAML   #
 ############################
@@ -1205,4 +1264,4 @@ templates:
             write_yaml_file(config_directory, save_folder, name, file_name, streaming_string)
 
     except Exception as e:
-        logger.error(f"An error occurred while generating 'Show Status Overlay' files: {e}")
+        logger.error(f"An error occurred while generating 'Streaming Overlay' files: {e}")
