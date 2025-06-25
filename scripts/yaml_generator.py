@@ -1129,6 +1129,7 @@ def create_streaming_yaml(config_directory):
         libraries = settings.get('libraries', {})
 
         streaming_settings = settings.get('streaming_overlay', {})
+        use_streaming = streaming_settings.get('use', 'streaming_overlay_use')
         use_extra_streaming = streaming_settings.get('use_extra_streaming', False)
         default_streaming_services = streaming_settings.get('streaming_services', {}).get('default_streaming', {})
         extra_streaming_services = streaming_settings.get('streaming_services', {}).get('extra_streaming', {})
@@ -1141,13 +1142,14 @@ def create_streaming_yaml(config_directory):
             'FuboTV': '257', 'FXNOW': '123', 'Hoopla': '212', 'MGM+': '34|636', 'Starz': '43|1855|634|1794',
             'TBS': '506', 'TNT': '363', 'truTV': '507', 'tubiTV': '73', 'USA': '322'
 }
-        for library_name, library_settings in libraries.items():
-            is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
-            use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
-            use_vote_count = get_with_defaults(streaming_settings, 'use_vote_count', 'use_vote_count')
-            logger.info(f"{indentlog}Creating Streaming template YAML for {library_name}.")
+        if use_streaming:
+            for library_name, library_settings in libraries.items():
+                is_anime = get_with_defaults(library_settings, 'is_anime', 'is_anime')
+                use_watch_region = get_with_defaults(library_settings, 'use_watch_region', 'use_watch_region')
+                use_vote_count = get_with_defaults(streaming_settings, 'use_vote_count', 'use_vote_count')
+                logger.info(f"{indentlog}Creating Streaming template YAML for {library_name}.")
 
-            streaming_string = f"""# {library_name} Streaming Overlay
+                streaming_string = f"""# {library_name} Streaming Overlay
 templates:
   streaming:
     overlay:
@@ -1160,57 +1162,57 @@ templates:
       horizontal_offset: {get_with_defaults(streaming_settings, 'horizontal_offset', 'streaming_horizontal_offset')}
       vertical_offset: {get_with_defaults(streaming_settings, 'vertical_offset', 'streaming_vertical_offset')}
 """
-            use_backdrop = get_with_defaults(streaming_settings, 'use_backdrop', 'use_backdrop')
-            if use_backdrop:
-                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
-                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
-                streaming_string += f"{indent3}back_color: \"{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}\"\n"
-                streaming_string += f"{indent3}back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}\n"
-                streaming_string += f"{indent3}back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}\n"
-                streaming_string += f"{indent3}back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}\n"
+                use_backdrop = get_with_defaults(streaming_settings, 'use_backdrop', 'use_backdrop')
+                if use_backdrop:
+                    logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                    logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                    streaming_string += f"{indent3}back_color: \"{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}\"\n"
+                    streaming_string += f"{indent3}back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}\n"
+                    streaming_string += f"{indent3}back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}\n"
+                    streaming_string += f"{indent3}back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}\n"
 
-            else:
-                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
-                logger.info(f"{indentlog3}Removing backdrop settings from 'Streaming' yaml.")
+                else:
+                    logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                    logger.info(f"{indentlog3}Removing backdrop settings from 'Streaming' yaml.")
             
-            streaming_string += f"""{indent2}ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
+                streaming_string += f"""{indent2}ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
     tmdb_discover:
       with_watch_providers: <<tmdb_key>>
 """
-            if use_watch_region:
-                logger.info(f"{indentlog2}'watch_region' set to 'true'")
-                logger.info(f"{indentlog3}Adding 'watch_region: {get_with_defaults(streaming_settings, 'watch_region', 'streaming_watch_region')}'.")
-                logger.info(f"{indentlog3}Adding 'with_watch_monetization_type: {get_with_defaults(streaming_settings, 'with_watch_monetization_types', 'streaming_with_watch_monetization_types')}'.")
-                streaming_string += f"{indent3}watch_region: {get_with_defaults(streaming_settings, 'watch_region', 'streaming_watch_region')}\n"
-                streaming_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(streaming_settings, 'with_watch_monetization_types', 'streaming_with_watch_monetization_types')}\n"
+                if use_watch_region:
+                    logger.info(f"{indentlog2}'watch_region' set to 'true'")
+                    logger.info(f"{indentlog3}Adding 'watch_region: {get_with_defaults(streaming_settings, 'watch_region', 'streaming_watch_region')}'.")
+                    logger.info(f"{indentlog3}Adding 'with_watch_monetization_type: {get_with_defaults(streaming_settings, 'with_watch_monetization_types', 'streaming_with_watch_monetization_types')}'.")
+                    streaming_string += f"{indent3}watch_region: {get_with_defaults(streaming_settings, 'watch_region', 'streaming_watch_region')}\n"
+                    streaming_string += f"{indent3}with_watch_monetization_types: {get_with_defaults(streaming_settings, 'with_watch_monetization_types', 'streaming_with_watch_monetization_types')}\n"
 
-            else:
-                logger.info(f"{indentlog2}'watch_region' set to 'false'")
-                logger.info(f"{indentlog3}Removing 'watch_region'.")
-                logger.info(f"{indentlog3}Removing 'with_watch_monetizaion_types'.")
+                else:
+                    logger.info(f"{indentlog2}'watch_region' set to 'false'")
+                    logger.info(f"{indentlog3}Removing 'watch_region'.")
+                    logger.info(f"{indentlog3}Removing 'with_watch_monetizaion_types'.")
             
-            if not is_anime:
-                logger.info(f"{indentlog2}'is_anime' set to 'false'")
-                logger.info(f"{indentlog3}Adding 'with_original_language: {get_with_defaults(streaming_settings, 'with_original_language', 'streaming_with_original_language')}'.")
-                streaming_string += f"{indent3}with_original_language: {get_with_defaults(streaming_settings, 'with_original_language', 'streaming_with_original_language')}\n"
+                if not is_anime:
+                    logger.info(f"{indentlog2}'is_anime' set to 'false'")
+                    logger.info(f"{indentlog3}Adding 'with_original_language: {get_with_defaults(streaming_settings, 'with_original_language', 'streaming_with_original_language')}'.")
+                    streaming_string += f"{indent3}with_original_language: {get_with_defaults(streaming_settings, 'with_original_language', 'streaming_with_original_language')}\n"
 
-            else:
-                logger.info(f"{indentlog2}'is_anime' set to 'true'")
-                logger.info(f"{indentlog3}Removing 'with_original_language'.")
+                else:
+                    logger.info(f"{indentlog2}'is_anime' set to 'true'")
+                    logger.info(f"{indentlog3}Removing 'with_original_language'.")
 
-            streaming_string += f"{indent3}limit: <<limit>>\n"
+                streaming_string += f"{indent3}limit: <<limit>>\n"
 
-            if use_vote_count:
-                logger.info(f"{indentlog2}'use_vote_count' set to 'true'")
-                logger.info(f"{indentlog3}Adding 'vote_count.gte: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}'.")
-                streaming_string += f"{indent3}vote_count.gte: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}\n"
+                if use_vote_count:
+                    logger.info(f"{indentlog2}'use_vote_count' set to 'true'")
+                    logger.info(f"{indentlog3}Adding 'vote_count.gte: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}'.")
+                    streaming_string += f"{indent3}vote_count.gte: {get_with_defaults(streaming_settings, 'vote_count', 'vote_count')}\n"
 
-            streaming_string += f"{indent3}sort_by: popularity.desc\n"
+                streaming_string += f"{indent3}sort_by: popularity.desc\n"
 
-            logger.info(f"{indentlog}Streaming template created")
-            logger.info(f"{indentlog}Creating streaming overlays")
+                logger.info(f"{indentlog}Streaming template created")
+                logger.info(f"{indentlog}Creating streaming overlays")
 
-            plex_fallback_string = f"""\noverlays:\n
+                plex_fallback_string = f"""\noverlays:\n
 # Plex Fallback #
   Plex Fallback Overlay:
     overlay:
@@ -1223,39 +1225,28 @@ templates:
       horizontal_offset: {get_with_defaults(streaming_settings, 'horizontal_offset', 'streaming_horizontal_offset')}
       vertical_offset: {get_with_defaults(streaming_settings, 'vertical_offset', 'streaming_vertical_offset')}
 """
-            if use_backdrop:
-                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
-                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
-                plex_fallback_string += f"{indent3}back_color: \"{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}\"\n"
-                plex_fallback_string += f"{indent3}back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}\n"
-                plex_fallback_string += f"{indent3}back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}\n"
-                plex_fallback_string += f"{indent3}back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}\n"
+                if use_backdrop:
+                    logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
+                    logger.info(f"{indentlog3}Adding backdrop settings to yaml")
+                    plex_fallback_string += f"{indent3}back_color: \"{get_with_defaults(streaming_settings, 'back_color', 'streaming_back_color')}\"\n"
+                    plex_fallback_string += f"{indent3}back_width: {get_with_defaults(streaming_settings, 'back_width', 'streaming_back_width')}\n"
+                    plex_fallback_string += f"{indent3}back_height: {get_with_defaults(streaming_settings, 'back_height', 'streaming_back_height')}\n"
+                    plex_fallback_string += f"{indent3}back_radius: {get_with_defaults(streaming_settings, 'back_radius', 'streaming_back_radius')}\n"
 
-            else:
-                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
-                logger.info(f"{indentlog3}Removing backdrop settings from 'Streaming' yaml.")
+                else:
+                    logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
+                    logger.info(f"{indentlog3}Removing backdrop settings from 'Streaming' yaml.")
             
-            plex_fallback_string += f"""{indent2}ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
+                plex_fallback_string += f"""{indent2}ignore_blank_results: {get_with_defaults(streaming_settings, 'ignore_blank_results', 'streaming_ignore_blank_results').lower()}
     plex_all: true
 """
-            streaming_string += plex_fallback_string
+                streaming_string += plex_fallback_string
 
-            streaming_string += f"""
+                streaming_string += f"""
 # Streaming #
     # Same as Kometa Default Streaming #
 """
-            for service, service_settings in default_streaming_services.items():
-                if service_settings.get('use', True):
-                    limit = service_settings.get('limit', 1500)
-                    weight = service_settings.get('weight', 100)
-                    tmdb_key = tmdb_keys.get(service, '<<tmdb_key>>')
-                    streaming_string += f"""
-  {service}:
-    variables: {{key: {service}, tmdb_key: {tmdb_key}, weight: {weight}, limit: {limit}}}
-    template: {{name: streaming}}
-"""
-            if use_extra_streaming:
-                for service, service_settings in extra_streaming_services.items():
+                for service, service_settings in default_streaming_services.items():
                     if service_settings.get('use', True):
                         limit = service_settings.get('limit', 1500)
                         weight = service_settings.get('weight', 100)
@@ -1265,18 +1256,33 @@ templates:
     variables: {{key: {service}, tmdb_key: {tmdb_key}, weight: {weight}, limit: {limit}}}
     template: {{name: streaming}}
 """
+                if use_extra_streaming:
+                    for service, service_settings in extra_streaming_services.items():
+                        if service_settings.get('use', True):
+                            limit = service_settings.get('limit', 1500)
+                            weight = service_settings.get('weight', 100)
+                            tmdb_key = tmdb_keys.get(service, '<<tmdb_key>>')
+                            streaming_string += f"""
+  {service}:
+    variables: {{key: {service}, tmdb_key: {tmdb_key}, weight: {weight}, limit: {limit}}}
+    template: {{name: streaming}}
+"""
             
 ############################
 #  Write Streaming YAML   #
 ############################
 
-            streaming_save_folder = streaming_settings.get('streaming_save_folder')
-            save_folder = streaming_save_folder
-            normalized_library_name = library_name.lower().replace(' ', '-')
-            file_name = f"overlay-streaming-{normalized_library_name}.yml"
-            name = 'Streaming Overlay'
+                streaming_save_folder = streaming_settings.get('streaming_save_folder')
+                save_folder = streaming_save_folder
+                normalized_library_name = library_name.lower().replace(' ', '-')
+                file_name = f"overlay-streaming-{normalized_library_name}.yml"
+                name = 'Streaming Overlay'
 
-            write_yaml_file(config_directory, save_folder, name, file_name, streaming_string)
+                write_yaml_file(config_directory, save_folder, name, file_name, streaming_string)
+
+        else:
+            logger.info(f"{indentlog}'Streaming Overlay' set to false. 'Streaming Overlay' not created")
+            logger.info("")
 
     except Exception as e:
         logger.error(f"An error occurred while generating 'Streaming Overlay' files: {e}")
