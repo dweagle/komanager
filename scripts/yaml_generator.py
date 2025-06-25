@@ -14,6 +14,7 @@ DEFAULTS = {
     'is_anime': False,
     'use_watch_region': True,
     'days_ahead': 30,
+    'date_format': '1',
     'date_delimiter': '/',
     'remove_leading_zero': False,
     'font': "{config_directory}/fonts/Inter-Medium.ttf",
@@ -216,16 +217,30 @@ def create_status_yaml(config_directory):
         
         remove_leading_zero = get_with_defaults(overlay_settings, 'remove_leading_zero', False)
 
+        date_format = get_with_defaults(overlay_settings, 'date_format', 'date_format')
+
         if remove_leading_zero:
             if platform.system() == "Windows":
-                month_format_code = "%#m"
-                day_format_code = "%#d"
+                month = "%#m"
+                day = "%#d"
             elif platform.system() in ["Linux", "Darwin"]:
-                month_format_code = "%-m"
-                day_format_code = "%-d"
+                month = "%-m"
+                day = "%-d"
         else:
-            month_format_code = "%m"
-            day_format_code = "%d"
+            month = "%m"
+            day = "%d"
+            
+        try:
+            date_format_int = int(date_format)
+        except Exception:
+            date_format_int = 1 
+
+        if date_format_int== 2:
+            date_format = f"{day}{date_delimiter}{month}"
+            date_format_with_year = f"{day}{date_delimiter}{month}{date_delimiter}%Y"
+        else:
+            date_format = f"{month}{date_delimiter}{day}"
+            date_format_with_year = f"{month}{date_delimiter}{day}{date_delimiter}%Y"
 
         for library_name, library_settings in libraries.items():
             if library_settings.get('library_type') != 'show':
@@ -401,8 +416,8 @@ templates:
                     next_day_date = datetime.strptime(next_day_date_str, '%m/%d/%Y')
                     mmddyyyy = next_day_date.strftime('%m/%d/%Y')
 
-                    mmdd_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}')
-                    mmddyyyy_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}{date_delimiter}%Y')
+                    mmdd_custom = next_day_date.strftime(date_format)
+                    mmddyyyy_custom = next_day_date.strftime(date_format_with_year)
 
                     weight = 90 - i + 1 
                     
@@ -479,8 +494,8 @@ templates:
                     next_day_date = datetime.strptime(next_day_date_str, '%m/%d/%Y')
                     mmddyyyy = next_day_date.strftime('%m/%d/%Y')
 
-                    mmdd_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}')
-                    mmddyyyy_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}{date_delimiter}%Y')
+                    mmdd_custom = next_day_date.strftime(date_format)
+                    mmddyyyy_custom = next_day_date.strftime(date_format_with_year)
 
                     weight = 74 - i + 1
                     
@@ -584,8 +599,8 @@ templates:
                     next_day_date = datetime.strptime(next_day_date_str, '%m/%d/%Y')
                     mmddyyyy = next_day_date.strftime('%m/%d/%Y')
 
-                    mmdd_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}')
-                    mmddyyyy_custom = next_day_date.strftime(f'{month_format_code}{date_delimiter}{day_format_code}{date_delimiter}%Y')
+                    mmdd_custom = next_day_date.strftime(date_format)
+                    mmddyyyy_custom = next_day_date.strftime(date_format_with_year)
 
                     weight = 42 - i + 1
                     

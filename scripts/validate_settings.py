@@ -79,6 +79,7 @@ def validate_status_overlay(status_overlay, config_directory):
         logger.info(f"{indentlog2}overlay_settings:")
         validate_integer_setting(overlay_settings, 'days_ahead', 30, 1, 30)
         validate_path_setting(overlay_settings, 'overlay_save_folder', config_directory, True)
+        validate_choice_setting(overlay_settings, 'date_format', ['1', '2', 1, 2], 1)
         validate_choice_setting(overlay_settings, 'date_delimiter', ['/', '.', '-', '_'], '/')
         validate_boolean_setting(overlay_settings, 'remove_leading_zero', False)
         validate_path_setting(overlay_settings, 'font', f"{config_directory}/fonts/Inter-Medium.ttf", True)

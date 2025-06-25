@@ -25,6 +25,7 @@
           "properties": {
             "days_ahead": { "type": "integer", "minimum": 1, "maximum": 30 },
             "overlay_save_folder": { "type": "string" },
+            "date_format": { "type": "string", "enum": ["1", "2"]},
             "date_delimiter": { "type": "string", "enum": ["/", ".", "_", "-"]},
             "remove_leading_zero": { "type": "boolean" },
             "font": { "type": "string" },
@@ -48,6 +49,7 @@
           "required": [
             "days_ahead",
             "overlay_save_folder",
+            "date_format",
             "date_delimiter",
             "remove_leading_zero",
             "font",

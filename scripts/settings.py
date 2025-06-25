@@ -46,6 +46,7 @@ settings = CommentedMap({
         "overlay_settings": CommentedMap({
             "days_ahead": 30,
             "overlay_save_folder": "path/to/folder",
+            "date_format": 1,
             "date_delimiter": DoubleQuotedScalarString("/"),
             "remove_leading_zero": False,
             "font": "path/to/kometa-font",

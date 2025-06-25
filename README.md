@@ -76,6 +76,7 @@ libraries:                   # Plex library names to create Kometa overlays and 
 status_overlay:
   overlay_settings:                  
     days_ahead: 30                # Days ahead for Returning Next (30 Days Max).
+    date_format: 1                # '1' = mm/dd '2' = dd/mm
     date_delimiter: "/"           # Change date delimiter that displays on overlay - Default "/" - must be "/", ".", "-", or "_".
     remove_leading_zero: False    # True removes the leading zero from MM/DD for overlays.  Ex. 01/02 becomes 1/2.
     overlay_save_folder: /path/to/folder     # Kometa overlay folders (leave blank for config folder). Kometa must have permissions to this folder.
