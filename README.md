@@ -86,6 +86,7 @@ status_overlay:
     vertical_align: top           # Vertical alignment (e.g., top, bottom, etc.).
     horizontal_offset: 0          # Horizontal offset in pixels.
     vertical_offset: 38           # Vertical offset in pixels.
+    use_backdrop: true            # Turns off backdrop behind show status.  Set to false if you use don't need a dark gradient behind your status.  
     back_width: 475               # Width of the overlay background.
     back_height: 55               # Height of the overlay background.
     back_radius: 30               # Corner radius for rounded backgrounds.
@@ -165,6 +166,7 @@ movie_new_release:              #USES status_overlay settinsgs for overlay posit
   use: true                     # True to create collection YAML. False to not create.
   new_movie_save_folder: /path/to/folder        # Path to overlay YAML folder (leave blank for /config folder) Kometa must have permissions to this folder.
   days_to_consider_new: 90      # Min 1, Max 90.
+  use_backdrop: true            # Turns off backdrop behind show status.  Set to false if you use don't need a dark gradient behind your status. 
   back_color: "#008001"
   text: "N E W  R E L E A S E"  # Change to desired spacing/text.
   font_color: "#FFFFFF"         # Font color override for this overlay only (Kometa requires #RGB, #RGBA, #RRGGBB or #RRGGBBAA).
@@ -211,6 +213,7 @@ streaming_overlay:  # Will apply a streaming service icon on your posters.  If n
   horizontal_align: left
   vertical_offset: 35
   horizontal_offset: 30
+  use_backdrop: true            # Turns off backdrop behind show streaming overaly.  Set to false if you use don't need a dark gradient behind your overlay. 
   back_width: 215
   back_height: 70
   back_radius: 10
@@ -269,6 +272,7 @@ top_10:           # Places a TOP 10 icon on your posters if shows are in a servi
     font: /path/to/kometa-font
     font_size: 45
     font_color: "#80FF40"
+    use_backdrop: true            # Turns off backdrop behind overlay.  Set to false if you use don't need a dark gradient behind your overlay. 
     back_width: 215
     back_height: 70
     back_radius: 10
