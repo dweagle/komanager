@@ -334,6 +334,11 @@ def add_comments(settings):
         "overlay_save_folder",
         column=max_key_length + 20
     )
+    settings["status_overlay"]["overlay_settings"].yaml_add_eol_comment(
+        "Change status overlay date format: 1 = mm/dd, 2 = dd/mm",
+        "date_format",
+        column=max_key_length + 20
+    )
     settings["status_overlay"].yaml_add_eol_comment(
         "Turn overlays off/on, adjust font color, back color, and text.",
         "use_overlays",
