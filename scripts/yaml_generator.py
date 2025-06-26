@@ -218,29 +218,36 @@ def create_status_yaml(config_directory):
         remove_leading_zero = get_with_defaults(overlay_settings, 'remove_leading_zero', False)
 
         date_format = get_with_defaults(overlay_settings, 'date_format', 'date_format')
+        if not date_format:
+            date_format = "%m/%d"
 
-        if remove_leading_zero:
-            if platform.system() == "Windows":
-                month = "%#m"
-                day = "%#d"
-            elif platform.system() in ["Linux", "Darwin"]:
-                month = "%-m"
-                day = "%-d"
-        else:
-            month = "%m"
-            day = "%d"
-            
         try:
             date_format_int = int(date_format)
-        except Exception:
-            date_format_int = 1 
+            if remove_leading_zero:
+                if platform.system() == "Windows":
+                    month = "%#m"
+                    day = "%#d"
+                elif platform.system() in ["Linux", "Darwin"]:
+                    month = "%-m"
+                    day = "%-d"
+                else:
+                    month = "%m"
+                    day = "%d"
+            else:
+                month = "%m"
+                day = "%d"
 
-        if date_format_int== 2:
-            date_format = f"{day}{date_delimiter}{month}"
-            date_format_with_year = f"{day}{date_delimiter}{month}{date_delimiter}%Y"
-        else:
-            date_format = f"{month}{date_delimiter}{day}"
-            date_format_with_year = f"{month}{date_delimiter}{day}{date_delimiter}%Y"
+            if date_format_int == 2:
+                date_format = f"{day}{date_delimiter}{month}"
+                date_format_with_year = f"{day}{date_delimiter}{month}{date_delimiter}%Y"
+            else:
+                date_format = f"{month}{date_delimiter}{day}"
+                date_format_with_year = f"{month}{date_delimiter}{day}{date_delimiter}%Y"
+        except Exception:
+
+            date_format_with_year = date_format
+            if "%Y" not in date_format:
+                date_format_with_year = date_format + "/%Y"
 
         for library_name, library_settings in libraries.items():
             if library_settings.get('library_type') != 'show':

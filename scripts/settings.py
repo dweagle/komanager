@@ -46,7 +46,7 @@ settings = CommentedMap({
         "overlay_settings": CommentedMap({
             "days_ahead": 30,
             "overlay_save_folder": "path/to/folder",
-            "date_format": 1,
+            "date_format": "%m/%d",
             "date_delimiter": DoubleQuotedScalarString("/"),
             "remove_leading_zero": False,
             "font": "path/to/kometa-font",
@@ -335,7 +335,7 @@ def add_comments(settings):
         column=max_key_length + 20
     )
     settings["status_overlay"]["overlay_settings"].yaml_add_eol_comment(
-        "Change status overlay date format: 1 = mm/dd, 2 = dd/mm",
+        "Change status overlay date format: 1 = mm/dd, 2 = dd/mm or use custom format in quotes.  Custom format ignores 'remove_leading_zero' setting",
         "date_format",
         column=max_key_length + 20
     )
