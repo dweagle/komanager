@@ -1,6 +1,7 @@
 README.md
 .gitignore
 .github/
+.venv/
 readme_docs/
 json_schema/
 !/posters
