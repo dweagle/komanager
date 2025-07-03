@@ -7,7 +7,7 @@ import argparse
 from datetime import datetime
 from scripts.logger import log_setup
 from scripts.scheduler import schedule_main, scheduler
-from scripts.settings import create_settings_file, update_settings_file
+from scripts.settings import create_settings_file
 from scripts.validate_settings import validate_settings
 from scripts.yaml_generator import create_status_yaml, create_collection_yaml, create_new_movie_yaml, create_in_history_yaml, create_top10_overlay_yaml, create_top10_collection_yaml, create_streaming_yaml
 
@@ -102,8 +102,6 @@ def main_logic():
             create_settings_file(config_directory, args.run_now, run_now_env, in_docker)
             return
         
-        update_settings_file(config_directory)
-
         logger.info("")
         logger.info("Validating settings file...")
         logger.info("")
