@@ -210,6 +210,9 @@ streaming_overlay:  # Will apply a streaming service icon on your posters.  If n
   use: true
   streaming_save_folder: /home/denny/docker/kometa/config/dadflix-custom/komanager
   streaming_image_folder: config/dadflix-custom/komanager/streaming-images # Kometa must have permissions for image folder path.
+  streaming_image_size: default   # 'default' or 'small'  Default is closer to kometa defaults.
+  logo_with_gradient: false       # Slight gradient added to streaming logos to stand out against bright backgrounds.  No need for separate gradient.
+  logo_with_black_backing: false  # 'logo_with_gradient' and 'logo_with_black_backing' can't both be true.  Only one can be true.
   vertical_align: top
   horizontal_align: left
   vertical_offset: 35

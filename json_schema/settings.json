@@ -294,6 +294,8 @@
         "use": { "type": "boolean" },
         "streaming_save_folder": { "type": "string" },
         "streaming_image_folder": { "type": "string" },
+        "logo_with_gradient": { "type": "boolean" },
+        "logo_with_black_backing": { "type": "boolean" },
         "vertical_align": { "type": "string", "enum": ["top","center","bottom"] },
         "horizontal_align": { "type": "string", "enum": ["left","center","right"] },
         "vertical_offset": { "type": "integer", "minimum": 0 },
@@ -354,11 +356,24 @@
           }
         }
       },
+      "allOf": [
+        {
+          "not": {
+            "properties": {
+              "logo_with_gradient": { "const": true },
+              "logo_with_black_backing": { "const": true }
+            },
+            "required": ["logo_with_gradient", "logo_with_black_backing"]
+          },
+          "errorMessage": "Only one of 'logo_with_gradient' or 'logo_with_black_backing' can be true at the same time."
+        }
+      ],
       "required": [
         "use",
         "streaming_save_folder",
         "streaming_image_folder",
-        "vertical_align",
+        "logo_with_gradient",
+        "logo_with_black_backing",
         "horizontal_align",
         "vertical_offset",
         "horizontal_offset",

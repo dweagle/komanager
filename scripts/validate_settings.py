@@ -181,9 +181,18 @@ def validate_streaming_overlay(streaming_overlay, config_directory):
     logger.info("")
     logger.info(f"{indentlog}streaming_overlay:")
 
+    gradient = streaming_overlay.get("logo_with_gradient", False)
+    black = streaming_overlay.get("logo_with_black_backing", False)
+    if gradient and black:
+        logger.error(f"{indentlog2}Both 'logo_with_gradient' and 'logo_with_black_backing' are set to True. Only one can be True at a time.")
+        return False
+    
     validate_boolean_setting(streaming_overlay, 'use', True)
     validate_path_setting(streaming_overlay, 'streaming_save_folder', config_directory, True)
     validate_path_setting(streaming_overlay, 'streaming_image_folder', config_directory, True)
+    validate_choice_setting(streaming_overlay, 'streaming_image_size', ['default', 'small'], 'default')
+    validate_boolean_setting(streaming_overlay, 'logo_with_gradient', False)
+    validate_boolean_setting(streaming_overlay, 'logo_with_black_backing', False)
     validate_choice_setting(streaming_overlay, 'vertical_align', ['top', 'center', 'bottom'], 'top')
     validate_choice_setting(streaming_overlay, 'horizontal_align', ['left', 'center', 'right'], 'left')
     validate_integer_setting(streaming_overlay, 'vertical_offset', 35, 0, None)

@@ -91,6 +91,9 @@ DEFAULTS = {
 
     'streaming_overlay_use': True,
     'streaming_image_folder': "{config_directory}/streaming-images",
+    "streaming_image_size": "default",
+    "logo_with_gradient": False,
+    "logo_with_black_backing": False,
     'streaming_vertical_align': 'top',
     'streaming_horizontal_align': 'left',
     'streaming_vertical_offset': 30,
@@ -1137,6 +1140,23 @@ def create_streaming_yaml(config_directory):
 
         streaming_settings = settings.get('streaming_overlay', {})
         use_streaming = streaming_settings.get('use', 'streaming_overlay_use')
+
+        image_size = streaming_settings.get("streaming_image_size", "default")  # "default" or "small"
+        gradient = streaming_settings.get("logo_with_gradient", False)
+        black_backing = streaming_settings.get("logo_with_black_backing", False)
+        if gradient and black_backing:
+            raise ValueError("Only one of 'logo_with_gradient' or 'logo_with_black_backing' can be True.")
+        
+        suffix = ""
+
+        if gradient:
+            suffix = "-gradient"
+        elif black_backing:
+            suffix = "-black"
+
+        if image_size == "small":
+            suffix = f"{suffix}-small" if suffix else "-small"
+                
         use_extra_streaming = streaming_settings.get('use_extra_streaming', False)
         default_streaming_services = streaming_settings.get('streaming_services', {}).get('default_streaming', {})
         extra_streaming_services = streaming_settings.get('streaming_services', {}).get('extra_streaming', {})
@@ -1161,7 +1181,7 @@ templates:
   streaming:
     overlay:
       name: <<overlay_name>>
-      file: "{get_with_defaults(streaming_settings, 'streaming_image_folder', 'streaming_image_folder', config_directory)}/<<key>>.png"
+      file: "{get_with_defaults(streaming_settings, 'streaming_image_folder', 'streaming_image_folder', config_directory)}/<<key>>{suffix}.png"
       group: ICONS
       weight: <<weight>>
       horizontal_align: {get_with_defaults(streaming_settings, 'horizontal_align', 'streaming_horizontal_align')}
