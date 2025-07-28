@@ -1244,7 +1244,7 @@ templates:
   Plex Fallback Overlay:
     overlay:
       name: plex
-      file: "{get_with_defaults(streaming_settings, 'streaming_image_folder', 'streaming_image_folder', config_directory)}/Plex.png"
+      file: "{get_with_defaults(streaming_settings, 'streaming_image_folder', 'streaming_image_folder', config_directory)}/Plex{suffix}.png"
       group: ICONS
       weight: 15
       horizontal_align: {get_with_defaults(streaming_settings, 'horizontal_align', 'streaming_horizontal_align')}
