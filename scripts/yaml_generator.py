@@ -295,7 +295,6 @@ templates:
     tmdb_discover:
       air_date.gte: <<date>>
       air_date.lte: <<date>>
-      timezone: {timezone}
       with_status: <<status>>
 """
             if use_watch_region:
@@ -770,7 +769,6 @@ collections:
     tmdb_discover:
       air_date.gte: {air_date}
       air_date.lte: {collection_days_past}
-      timezone: {timezone}
       with_status: 0
 """
                 if use_watch_region:
