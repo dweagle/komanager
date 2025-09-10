@@ -321,7 +321,7 @@
                 "Netflix": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
                 "AppleTV": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
                 "Disney": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
-                "Max": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
+                "HBO Max": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
                 "Prime": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
                 "Crunchyroll": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
                 "YouTube": {"type": "object", "properties": {"use": {"type": "boolean"}, "limit": {"type": "integer", "minimum": 0}, "weight": {"type": "integer", "minimum": 0}}},
