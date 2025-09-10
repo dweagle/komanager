@@ -982,8 +982,8 @@ overlays:
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/disney-world-top10-without-fallback
 
-  Max Top 10:
-    variables: {{key: max, weight: 40}}
+  HBO Max Top 10:
+    variables: {{key: hbomax, weight: 40}}
     template: [name: Top 10 Overlay]
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/hbo-united-states-top10-with-united-kingdom-fallback
@@ -1071,7 +1071,7 @@ collections:
     trakt_list:
       - https://trakt.tv/users/navino16/lists/netflix-united-states-top10-with-united-kingdom-fallback
 
-  Max Top 10:
+  HBO Max Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/max_top.jpg}}
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/hbo-united-states-top10-with-united-kingdom-fallback
@@ -1160,7 +1160,7 @@ def create_streaming_yaml(config_directory):
         extra_streaming_services = streaming_settings.get('streaming_services', {}).get('extra_streaming', {})
 
         tmdb_keys = {
-            'Netflix': '8', 'AppleTV': '350', 'Disney': '337', 'Max': '1899|1825', 'Prime': '9',
+            'Netflix': '8', 'AppleTV': '350', 'Disney': '337', 'HBO Max': '1899|1825', 'Prime': '9',
             'Crunchyroll': '283|1968', 'YouTube': '188', 'Hulu': '15', 'Paramount': '531|2303|1770|1853|582|633',
             'Peacock': '386|387', 'Crave': '230', 'Discovery+': '510|520|1708|524|584', 'NOW': '39', 'All 4': '103',
             'BritBox': '151', 'BET+': '1759', 'AMC+': '80|526|1854|528|635', 'Freevee': '613',

@@ -234,7 +234,7 @@ streaming_services = CommentedMap({
         "Netflix": CommentedMap({"use": True, "limit": 1500, "weight": 180}),
         "AppleTV": CommentedMap({"use": True, "limit": 1500, "weight": 170}),
         "Disney": CommentedMap({"use": True, "limit": 1500, "weight": 160}),
-        "Max": CommentedMap({"use": True, "limit": 1500, "weight": 150}),
+        "HBO Max": CommentedMap({"use": True, "limit": 1500, "weight": 150}),
         "Prime": CommentedMap({"use": True, "limit": 1500, "weight": 140}),
         "Crunchyroll": CommentedMap({"use": True, "limit": 1500, "weight": 130}),
         "YouTube": CommentedMap({"use": True, "limit": 1500, "weight": 120}),
