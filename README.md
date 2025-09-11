@@ -235,7 +235,7 @@ streaming_overlay:  # Will apply a streaming service icon on your posters.  If n
       Netflix: {use: true, limit: 1500, weight: 180}  # These streaming services are found in Kometa's defaults.
       AppleTV: {use: true, limit: 1500, weight: 170}  # Set 'use' to true to use or false to not use this streaming service overlay.
       Disney: {use: true, limit: 1500, weight: 160}
-      Max: {use: true, limit: 1500, weight: 150}
+      HBO Max: {use: true, limit: 1500, weight: 150}
       Prime: {use: true, limit: 1500, weight: 140}
       Crunchyroll: {use: true, limit: 1500, weight: 130}
       YouTube: {use: false, limit: 1500, weight: 120}
