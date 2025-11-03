@@ -986,7 +986,7 @@ overlays:
     variables: {{key: hbomax, weight: 40}}
     template: [name: Top 10 Overlay]
     trakt_list: 
-      - https://trakt.tv/users/navino16/lists/hbo-united-states-top10-with-united-kingdom-fallback
+      - https://trakt.tv/users/navino16/lists/hbo-max-united-states-top10-with-united-kingdom-fallback
 
   Hulu Top 10:
     variables: {{key: hulu, weight: 30}}
@@ -1074,7 +1074,7 @@ collections:
   HBO Max Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/max_top.jpg}}
     trakt_list: 
-      - https://trakt.tv/users/navino16/lists/hbo-united-states-top10-with-united-kingdom-fallback
+      - https://trakt.tv/users/navino16/lists/hbo-max-united-states-top10-with-united-kingdom-fallback
 
   Prime Video Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/prime_top.jpg}}
