@@ -1067,42 +1067,42 @@ templates:
 
 collections:
   Netflix Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/netflix_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/netflix_top.jpg}}
     trakt_list:
       - https://trakt.tv/users/navino16/lists/netflix-united-states-top10-with-united-kingdom-fallback
 
   HBO Max Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/max_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/max_top.jpg}}
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/hbo-max-united-states-top10-with-united-kingdom-fallback
 
   Prime Video Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/prime_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/prime_top.jpg}}
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/amazon-prime-united-states-top10-with-united-kingdom-fallback
 
   Paramount+ Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/paramount_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/paramount_top.jpg}}
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/paramount-plus-united-states-top10-with-united-kingdom-fallback
 
   Hulu Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/hulu_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/hulu_top.jpg}}
     trakt_list: 
       -  https://trakt.tv/users/navino16/lists/hulu-united-states-top10-with-world-fallback
 
   Disney+ Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/disney_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/disney_top.jpg}}
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/disney-world-top10-without-fallback
 
   Starz Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/starz_top_10.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/starz_top_10.jpg}}
     trakt_list:
       - https://trakt.tv/users/navino16/lists/starz-united-states-top10-with-united-kingdom-fallback
 
   Apple TV+ Top 10:
-    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/apple_top.jpg}}
+    template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/apple_top.jpg}}
     trakt_list: 
       - https://trakt.tv/users/navino16/lists/apple-tv-united-states-top10-with-united-kingdom-fallback
 
