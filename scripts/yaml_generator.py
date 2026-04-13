@@ -682,7 +682,7 @@ overlays:
 
             else:
                 logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
-                logger.info(f"{indentlog3}Removing backdrop settings from 'Top 10 Overlay' yaml.")
+                logger.info(f"{indentlog3}Removing backdrop settings from 'Movie New Release' yaml.")
             
             new_movie_string += f"""{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
     plex_search:
