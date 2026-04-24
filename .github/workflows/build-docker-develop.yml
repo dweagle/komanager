@@ -1,17 +1,7 @@
 name: Docker Develop Build
 
 on:
-  push:
-    branches:
-      - develop
-    paths:
-      - logger.py
-      - main.py
-      - scheduler.py
-      - settings.py
-      - validate_settings.py
-      - yaml_generator.py
-      - Dockerfile
+  workflow_dispatch:
 
 jobs:
   docker-build-latest:
