@@ -154,6 +154,24 @@ def get_with_defaults(settings, primary_key, fallback_key=None, config_directory
 
     return value 
 
+TEXT_OVERRIDE_KEYS = (
+    'back_width', 'back_height', 'back_radius',
+    'text_horizontal_align', 'text_vertical_align',
+    'text_horizontal_offset', 'text_vertical_offset',
+)
+BD_OVERRIDE_KEYS = (
+    'bd_horizontal_align', 'bd_vertical_align',
+    'bd_horizontal_offset', 'bd_vertical_offset',
+)
+
+def any_status_uses_overrides(use_overlays, keys):
+    return any(
+        key in status_settings
+        for status_settings in use_overlays.values()
+        if isinstance(status_settings, dict)
+        for key in keys
+    )
+
 def get_backdrop_overrides(per_status_settings):
     overrides = ""
     for key in ('back_width', 'back_height', 'back_radius'):
@@ -316,31 +334,48 @@ templates:
       font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
       font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
       font_color: <<font_color>>
-      horizontal_align: <<horizontal_align>>
-      vertical_align: <<vertical_align>>
-      horizontal_offset: <<horizontal_offset>>
-      vertical_offset: <<vertical_offset>>
 """
             use_backdrop = get_with_defaults(overlay_settings, 'use_backdrop', 'use_backdrop')
+            use_text_overrides = any_status_uses_overrides(use_overlays, TEXT_OVERRIDE_KEYS)
+
+            # Align/offset: use <<variable>> if any status overrides them, else hardcode globals
+            if use_text_overrides:
+                status_string += f"{indent3}horizontal_align: <<horizontal_align>>\n"
+                status_string += f"{indent3}vertical_align: <<vertical_align>>\n"
+                status_string += f"{indent3}horizontal_offset: <<horizontal_offset>>\n"
+                status_string += f"{indent3}vertical_offset: <<vertical_offset>>\n"
+            else:
+                status_string += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                status_string += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                status_string += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                status_string += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+
             if use_backdrop:
                 logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
                 logger.info(f"{indentlog3}Adding backdrop settings to yaml")
                 status_string += f"{indent3}back_color: <<back_color>>\n"
-                status_string += f"{indent3}back_width: <<back_width>>\n"
-                status_string += f"{indent3}back_height: <<back_height>>\n"
-                status_string += f"{indent3}back_radius: <<back_radius>>\n"
+                if use_text_overrides:
+                    status_string += f"{indent3}back_width: <<back_width>>\n"
+                    status_string += f"{indent3}back_height: <<back_height>>\n"
+                    status_string += f"{indent3}back_radius: <<back_radius>>\n"
+                else:
+                    status_string += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                    status_string += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                    status_string += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
             else:
                 logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
                 logger.info(f"{indentlog3}Removing backdrop settings from status yaml.")
-            status_string += f"{indent2}default:\n"
-            status_string += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
-            status_string += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
-            status_string += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
-            status_string += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
-            if use_backdrop:
-                status_string += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
-                status_string += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
-                status_string += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
+
+            if use_text_overrides:
+                status_string += f"{indent2}default:\n"
+                status_string += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                status_string += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                status_string += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                status_string += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+                if use_backdrop:
+                    status_string += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                    status_string += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                    status_string += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
 
             status_string += f"""{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
     tmdb_discover:
@@ -382,34 +417,46 @@ templates:
       font: "{get_with_defaults(overlay_settings, 'font', 'font', config_directory)}"
       font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
       font_color: <<font_color>>
-      horizontal_align: <<horizontal_align>>
-      vertical_align: <<vertical_align>>
-      horizontal_offset: <<horizontal_offset>>
-      vertical_offset: <<vertical_offset>>
 """
-            if use_backdrop:
-                logger.info(f"{indentlog2}'use_backdrop' set to 'true'")
-                logger.info(f"{indentlog3}Adding backdrop settings to yaml")
-                plex_all += f"{indent3}back_color: <<back_color>>\n"
-                plex_all += f"{indent3}back_width: <<back_width>>\n"
-                plex_all += f"{indent3}back_height: <<back_height>>\n"
-                plex_all += f"{indent3}back_radius: <<back_radius>>\n"
+            # Align/offset: use <<variable>> if any status overrides them, else hardcode globals
+            if use_text_overrides:
+                plex_all += f"{indent3}horizontal_align: <<horizontal_align>>\n"
+                plex_all += f"{indent3}vertical_align: <<vertical_align>>\n"
+                plex_all += f"{indent3}horizontal_offset: <<horizontal_offset>>\n"
+                plex_all += f"{indent3}vertical_offset: <<vertical_offset>>\n"
             else:
-                logger.info(f"{indentlog2}'use_backdrop' set to 'false'")
-                logger.info(f"{indentlog3}Removing backdrop settings from status yaml.")
-            plex_all += f"{indent2}default:\n"
-            plex_all += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
-            plex_all += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
-            plex_all += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
-            plex_all += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+                plex_all += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                plex_all += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                plex_all += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                plex_all += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+
             if use_backdrop:
-                plex_all += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
-                plex_all += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
-                plex_all += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
+                plex_all += f"{indent3}back_color: <<back_color>>\n"
+                if use_text_overrides:
+                    plex_all += f"{indent3}back_width: <<back_width>>\n"
+                    plex_all += f"{indent3}back_height: <<back_height>>\n"
+                    plex_all += f"{indent3}back_radius: <<back_radius>>\n"
+                else:
+                    plex_all += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                    plex_all += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                    plex_all += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
+
+            if use_text_overrides:
+                plex_all += f"{indent2}default:\n"
+                plex_all += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                plex_all += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                plex_all += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                plex_all += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+                if use_backdrop:
+                    plex_all += f"{indent3}back_width: {get_with_defaults(overlay_settings, 'back_width', 'back_width')}\n"
+                    plex_all += f"{indent3}back_height: {get_with_defaults(overlay_settings, 'back_height', 'back_height')}\n"
+                    plex_all += f"{indent3}back_radius: {get_with_defaults(overlay_settings, 'back_radius', 'back_radius')}\n"
 
             plex_all += f"""{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
 """
             status_string += plex_all
+
+            use_bd_overrides = any_status_uses_overrides(use_overlays, BD_OVERRIDE_KEYS)
 
             image_discover_template = f"""
   {library_name} Backdrop Image TMDB Discover:
@@ -420,17 +467,25 @@ templates:
       weight: <<weight>>
       name: status-image
       file: <<file>>
-      horizontal_align: <<horizontal_align>>
-      vertical_align: <<vertical_align>>
-      horizontal_offset: <<horizontal_offset>>
-      vertical_offset: <<vertical_offset>>
-    default:
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
-    tmdb_discover:
+"""
+            if use_bd_overrides:
+                image_discover_template += f"{indent3}horizontal_align: <<horizontal_align>>\n"
+                image_discover_template += f"{indent3}vertical_align: <<vertical_align>>\n"
+                image_discover_template += f"{indent3}horizontal_offset: <<horizontal_offset>>\n"
+                image_discover_template += f"{indent3}vertical_offset: <<vertical_offset>>\n"
+                image_discover_template += f"{indent2}default:\n"
+                image_discover_template += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                image_discover_template += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                image_discover_template += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                image_discover_template += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+            else:
+                image_discover_template += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                image_discover_template += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                image_discover_template += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                image_discover_template += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+
+            image_discover_template += f"{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}\n"
+            image_discover_template += f"""    tmdb_discover:
       air_date.gte: <<date>>
       air_date.lte: <<date>>
       with_status: <<status>>
@@ -451,17 +506,24 @@ templates:
       weight: <<weight>>
       name: status-image
       file: <<file>>
-      horizontal_align: <<horizontal_align>>
-      vertical_align: <<vertical_align>>
-      horizontal_offset: <<horizontal_offset>>
-      vertical_offset: <<vertical_offset>>
-    default:
-      horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}
-      vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}
-      horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}
-      vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}
-    ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}
 """
+            if use_bd_overrides:
+                image_plex_all_template += f"{indent3}horizontal_align: <<horizontal_align>>\n"
+                image_plex_all_template += f"{indent3}vertical_align: <<vertical_align>>\n"
+                image_plex_all_template += f"{indent3}horizontal_offset: <<horizontal_offset>>\n"
+                image_plex_all_template += f"{indent3}vertical_offset: <<vertical_offset>>\n"
+                image_plex_all_template += f"{indent2}default:\n"
+                image_plex_all_template += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                image_plex_all_template += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                image_plex_all_template += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                image_plex_all_template += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+            else:
+                image_plex_all_template += f"{indent3}horizontal_align: {get_with_defaults(overlay_settings, 'horizontal_align', 'horizontal_align')}\n"
+                image_plex_all_template += f"{indent3}vertical_align: {get_with_defaults(overlay_settings, 'vertical_align', 'vertical_align')}\n"
+                image_plex_all_template += f"{indent3}horizontal_offset: {get_with_defaults(overlay_settings, 'horizontal_offset', 'horizontal_offset')}\n"
+                image_plex_all_template += f"{indent3}vertical_offset: {get_with_defaults(overlay_settings, 'vertical_offset', 'vertical_offset')}\n"
+
+            image_plex_all_template += f"{indent2}ignore_blank_results: {get_with_defaults(overlay_settings, 'ignore_blank_results', 'ignore_blank_results').lower()}\n"
             any_backdrop_image = any(v.get('backdrop_image') for v in use_overlays.values() if isinstance(v, dict))
             if any_backdrop_image:
                 status_string += image_discover_template
