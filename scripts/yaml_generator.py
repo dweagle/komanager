@@ -338,7 +338,6 @@ templates:
             use_backdrop = get_with_defaults(overlay_settings, 'use_backdrop', 'use_backdrop')
             use_text_overrides = any_status_uses_overrides(use_overlays, TEXT_OVERRIDE_KEYS)
 
-            # Align/offset: use <<variable>> if any status overrides them, else hardcode globals
             if use_text_overrides:
                 status_string += f"{indent3}horizontal_align: <<horizontal_align>>\n"
                 status_string += f"{indent3}vertical_align: <<vertical_align>>\n"
@@ -418,7 +417,6 @@ templates:
       font_size: {get_with_defaults(overlay_settings, 'font_size', 'font_size')}
       font_color: <<font_color>>
 """
-            # Align/offset: use <<variable>> if any status overrides them, else hardcode globals
             if use_text_overrides:
                 plex_all += f"{indent3}horizontal_align: <<horizontal_align>>\n"
                 plex_all += f"{indent3}vertical_align: <<vertical_align>>\n"
