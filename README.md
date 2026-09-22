@@ -7,7 +7,7 @@
 <div align="center">- 'Returning Soon' collection to display shows that will return to airing.</div><br>
 <div align="center">- 'In History' collection to display items released in your library from this day/week/month in history.</div><br>
 <div align="center">- 'Streaming' overlay to identify which streaming services shows and movies are available.</div><br>
-<div align="center">- 'Top 10' overlay and collection for major streaming services using <a href="https://github.com/Navino16/flixpatrol-top10-on-trakt">Navion16's Flixpatrol Top 10</a> Trakt list.</div><br>
+<div align="center">- 'Top 10' overlay and collection for major streaming services using <a href="https://mdblist.com/lists/dweagle79/netflix-top-10">dweagle79's Top 10</a> MDBList lists.</div><br>
 <div align="center">Inspired by <a href="https://github.com/InsertDisc/pattrmm">pattrmm</a> by InsertDisc</div>
 <br>
 <div align="center"> Example Statuses</div>

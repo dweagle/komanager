@@ -5,3 +5,4 @@ main/.github/workflows/build-docker-develop.yml
 !develop/.github/workflows/build-docker-develop.yml
 
 .venv/
+__pycache__/
