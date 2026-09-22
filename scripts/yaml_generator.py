@@ -1265,50 +1265,50 @@ overlays:
   Netflix Top 10:
     variables: {{key: netflix, weight: 60}}
     template: [name: Top 10 Overlay]
-    trakt_list:
-      - https://trakt.tv/users/navino16/lists/netflix-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/netflix-top-10
 
   Disney Top 10:
     variables: {{key: disney, weight: 50}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/disney-world-top10-without-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/disney-top-10
 
   HBO Max Top 10:
     variables: {{key: hbomax, weight: 40}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/hbo-max-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/hbo-max-top-10
 
   Hulu Top 10:
     variables: {{key: hulu, weight: 30}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      -  https://trakt.tv/users/navino16/lists/hulu-united-states-top10-with-world-fallback 
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/hulu-top-10
 
   Paramount Top 10:
     variables: {{key: paramount, weight: 20}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/paramount-plus-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/paramount-top-10
     
   Prime Top 10:
     variables: {{key: prime, weight: 10}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/amazon-prime-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/prime-video-top-10
     
   Apple Top 10:
     variables: {{key: apple, weight: 9}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/apple-tv-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/apple-tv-top-10
 
   Starz Top 10:
     variables: {{key: starz, weight: 8}}
     template: [name: Top 10 Overlay]
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/starz-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/starz-top-10
 """
             
 ########################
@@ -1361,43 +1361,43 @@ templates:
 collections:
   Netflix Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/netflix_top.jpg}}
-    trakt_list:
-      - https://trakt.tv/users/navino16/lists/netflix-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/netflix-top-10
 
   HBO Max Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/max_top.jpg}}
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/hbo-max-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/hbo-max-top-10
 
   Prime Video Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/prime_top.jpg}}
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/amazon-prime-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/prime-video-top-10
 
   Paramount+ Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/paramount_top.jpg}}
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/paramount-plus-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/paramount-top-10
 
   Hulu Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/hulu_top.jpg}}
-    trakt_list: 
-      -  https://trakt.tv/users/navino16/lists/hulu-united-states-top10-with-world-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/hulu-top-10
 
   Disney+ Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/disney_top.jpg}}
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/disney-world-top10-without-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/disney-top-10
 
   Starz Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/starz_top_10.jpg}}
-    trakt_list:
-      - https://trakt.tv/users/navino16/lists/starz-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/starz-top-10
 
   Apple TV+ Top 10:
     template: {{name: Top 10, poster: https://raw.githubusercontent.com/kometa-team/Default-Images/master/chart/color/apple_top.jpg}}
-    trakt_list: 
-      - https://trakt.tv/users/navino16/lists/apple-tv-united-states-top10-with-united-kingdom-fallback
+    mdblist_list:
+      - https://mdblist.com/lists/dweagle79/apple-tv-top-10
 
 """
 
